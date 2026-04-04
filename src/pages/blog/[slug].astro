@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+const readingTime = Math.max(1, Math.ceil(post.body!.length / 500));
+---
+
+<BaseLayout title={`${post.data.title} - XingHui`} description={post.data.description}>
+  <Header />
+
+  <main class="flex-1">
+    <article class="mx-auto px-6 pt-16 pb-20 md:pt-24" style="max-width: 720px;">
+      <!-- Meta -->
+      <div class="animate-fade-in stagger-1 flex items-center gap-3 mb-6">
+        <time class="text-xs tracking-wider uppercase" style="color: var(--text-secondary);">
+          {formatDate(post.data.date)}
+        </time>
+        <span class="text-xs" style="color: var(--border);">|</span>
+        <span class="text-xs" style="color: var(--text-secondary);">
+          约 {readingTime} 分钟阅读
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="animate-fade-in stagger-2 text-3xl md:text-4xl lg:text-5xl mb-4" style="font-family: var(--font-heading); color: var(--text); line-height: 1.15;">
+        {post.data.title}
+      </h1>
+
+      <!-- Description -->
+      <p class="animate-fade-in stagger-3 text-base md:text-lg mb-8" style="color: var(--text-secondary);">
+        {post.data.description}
+      </p>
+
+      <!-- Tags -->
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="animate-fade-in stagger-4 flex flex-wrap gap-2 mb-8">
+          {post.data.tags.map((tag: string) => (
+            <span class="text-xs px-2.5 py-1 rounded-full" style="background: var(--surface-2); color: var(--color-accent);">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <!-- Divider -->
+      <div class="animate-fade-in stagger-4 divider-accent mb-12"></div>
+
+      <!-- Content -->
+      <div class="animate-fade-in stagger-5 prose">
+        <Content />
+      </div>
+
+      <!-- Back -->
+      <div class="mt-16 pt-8 border-t" style="border-color: var(--border);">
+        <a href="/blog" class="inline-flex items-center gap-2 text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+          </svg>
+          返回文章列表
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

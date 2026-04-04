@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BlogCard from '../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout>
+  <Header />
+
+  <main class="flex-1">
+    <!-- Hero Section -->
+    <section class="mx-auto px-6 pt-20 pb-24 md:pt-32 md:pb-32" style="max-width: var(--container-max);">
+      <div class="max-w-2xl">
+        <!-- Greeting -->
+        <p class="animate-fade-in stagger-1 text-sm tracking-[0.2em] uppercase mb-6" style="color: var(--color-accent);">
+          Welcome
+        </p>
+
+        <!-- Name -->
+        <h1 class="animate-fade-in stagger-2 text-4xl md:text-6xl lg:text-7xl font-bold mb-6" style="font-family: var(--font-heading); color: var(--text);">
+          你好，我是<br/>
+          <span style="color: var(--color-accent);">星辉</span>
+        </h1>
+
+        <!-- Tagline -->
+        <p class="animate-fade-in stagger-3 text-lg md:text-xl leading-relaxed mb-8" style="color: var(--text-secondary);">
+          探索技术的深度，记录思考的痕迹。<br/>
+          在创造中寻找意义，在分享中传递价值。
+        </p>
+
+        <!-- Divider -->
+        <div class="animate-fade-in stagger-4 divider-accent mb-8"></div>
+
+        <!-- CTA -->
+        <div class="animate-fade-in stagger-5 flex items-center gap-6">
+          <a href="/blog" class="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wider uppercase rounded-lg transition-all duration-300 hover:translate-y-[-1px]" style="background: var(--color-accent); color: var(--color-bg-dark); font-weight: 500;">
+            浏览文章
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+          <a href="/about" class="text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            了解更多
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Decorative line -->
+    <div class="mx-auto px-6" style="max-width: var(--container-max);">
+      <div class="border-t" style="border-color: var(--border);"></div>
+    </div>
+
+    <!-- Latest Posts -->
+    <section class="mx-auto px-6 py-20 md:py-24" style="max-width: var(--container-max);">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Latest</p>
+          <h2 class="text-2xl md:text-3xl" style="font-family: var(--font-heading); color: var(--text);">
+            最新文章
+          </h2>
+        </div>
+        <a href="/blog" class="text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          查看全部 &rarr;
+        </a>
+      </div>
+
+      <div class="grid gap-6">
+        {posts.map(post => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date.toISOString()}
+            tags={post.data.tags}
+            slug={post.id}
+          />
+        ))}
+      </div>
+
+      {posts.length === 0 && (
+        <div class="text-center py-20">
+          <p class="text-lg" style="color: var(--text-secondary);">文章即将上线，敬请期待。</p>
+        </div>
+      )}
+    </section>
+
+    <!-- Quote Section -->
+    <div class="mx-auto px-6" style="max-width: var(--container-max);">
+      <div class="border-t" style="border-color: var(--border);"></div>
+    </div>
+
+    <section class="mx-auto px-6 py-20 md:py-24 text-center" style="max-width: var(--container-max);">
+      <blockquote class="max-w-xl mx-auto">
+        <p class="text-xl md:text-2xl italic leading-relaxed" style="font-family: var(--font-heading); color: var(--text-secondary);">
+          "The best way to predict the future is to create it."
+        </p>
+        <footer class="mt-4 text-sm" style="color: var(--color-accent);">
+          — Peter Drucker
+        </footer>
+      </blockquote>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

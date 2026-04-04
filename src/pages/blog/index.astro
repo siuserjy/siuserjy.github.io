@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Get all unique tags
+const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
+---
+
+<BaseLayout title="文章 - XingHui" description="关于技术、思考与创造的文章集合">
+  <Header />
+
+  <main class="flex-1">
+    <section class="mx-auto px-6 pt-16 pb-8 md:pt-24 md:pb-12" style="max-width: var(--container-max);">
+      <p class="animate-fade-in stagger-1 text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">
+        Articles
+      </p>
+      <h1 class="animate-fade-in stagger-2 text-3xl md:text-5xl mb-4" style="font-family: var(--font-heading); color: var(--text);">
+        所有文章
+      </h1>
+      <p class="animate-fade-in stagger-3 text-base" style="color: var(--text-secondary);">
+        共 {posts.length} 篇文章
+      </p>
+    </section>
+
+    <!-- Tags filter -->
+    {allTags.length > 0 && (
+      <section class="mx-auto px-6 pb-8" style="max-width: var(--container-max);">
+        <div class="flex flex-wrap gap-2">
+          {allTags.map(tag => (
+            <span class="text-xs px-3 py-1.5 rounded-full border cursor-default transition-colors duration-200 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]" style="border-color: var(--border); color: var(--text-secondary);">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Posts -->
+    <section class="mx-auto px-6 pb-20" style="max-width: var(--container-max);">
+      <div class="grid gap-6">
+        {posts.map(post => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date.toISOString()}
+            tags={post.data.tags}
+            slug={post.id}
+          />
+        ))}
+      </div>
+
+      {posts.length === 0 && (
+        <div class="text-center py-20">
+          <p class="text-lg" style="color: var(--text-secondary);">暂无文章，即将更新。</p>
+        </div>
+      )}
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

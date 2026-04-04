@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="关于 - XingHui" description="了解更多关于我的故事">
+  <Header />
+
+  <main class="flex-1">
+    <section class="mx-auto px-6 pt-16 pb-20 md:pt-24" style="max-width: 720px;">
+      <!-- Header -->
+      <p class="animate-fade-in stagger-1 text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">
+        About
+      </p>
+      <h1 class="animate-fade-in stagger-2 text-3xl md:text-5xl mb-6" style="font-family: var(--font-heading); color: var(--text);">
+        关于我
+      </h1>
+      <div class="animate-fade-in stagger-3 divider-accent mb-12"></div>
+
+      <!-- Content -->
+      <div class="animate-fade-in stagger-4 space-y-6">
+        <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+          你好，我是星辉。欢迎来到我的个人空间。
+        </p>
+
+        <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+          这里是我记录思考、分享洞察的地方。我相信技术的力量，也相信持续学习和创造的价值。在这个快速变化的时代，保持好奇心和独立思考尤为重要。
+        </p>
+
+        <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+          我关注的领域包括但不限于：人工智能、产品设计、创业与商业思维。
+          希望通过这个博客，能与志同道合的人建立连接。
+        </p>
+      </div>
+
+      <!-- Principles -->
+      <div class="animate-fade-in stagger-5 mt-16">
+        <h2 class="text-xl md:text-2xl mb-8" style="font-family: var(--font-heading); color: var(--text);">
+          信条
+        </h2>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">01</div>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">持续学习</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">保持对新知识的渴望，在变化中寻找不变的规律。</p>
+          </div>
+          <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">02</div>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">独立思考</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">不盲从权威，用第一性原理拆解问题。</p>
+          </div>
+          <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">03</div>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">创造价值</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">用技术和产品解决真实问题，创造长期价值。</p>
+          </div>
+          <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">04</div>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">分享与连接</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">在分享中成长，在连接中发现更多可能。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="mt-16 pt-8 border-t" style="border-color: var(--border);">
+        <h2 class="text-xl md:text-2xl mb-4" style="font-family: var(--font-heading); color: var(--text);">
+          联系我
+        </h2>
+        <p class="text-base leading-relaxed mb-6" style="color: var(--text-secondary);">
+          如果你对我写的内容感兴趣，或者想聊聊合作的可能性，欢迎通过以下方式联系我。
+        </p>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/siuserjy" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="mailto:your@email.com" class="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Email
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
