@@ -1,0 +1,57 @@
+---
+interface TimelineItem {
+  date: string;
+  title: string;
+  description: string;
+}
+
+const items: TimelineItem[] = [
+  {
+    date: '2024',
+    title: '全新启程',
+    description: '重建个人博客，开始系统性地记录思考与创造。深入探索 AI 产品化的可能性。'
+  },
+  {
+    date: '2023',
+    title: '深入 AI 领域',
+    description: '关注大模型技术发展，研究 AI 在实际产品中的应用场景与落地策略。'
+  },
+  {
+    date: '2022',
+    title: '技术积累',
+    description: '持续打磨技术能力，参与多个项目的开发实践，积累产品与工程经验。'
+  },
+  {
+    date: '2021',
+    title: '起步阶段',
+    description: '开始系统学习编程与产品思维，搭建了第一个个人博客。'
+  },
+];
+---
+
+<div class="relative">
+  <!-- Timeline line -->
+  <div class="absolute left-0 md:left-1/2 top-0 bottom-0 w-[1px] md:translate-x-[-0.5px]" style="background: var(--border);"></div>
+
+  <!-- Active line (animated) -->
+  <div class="timeline-active-line absolute left-0 md:left-1/2 top-0 w-[1px] md:translate-x-[-0.5px]" style="background: var(--color-accent); height: 0; transition: height 0.3s ease;"></div>
+
+  {items.map((item, i) => (
+    <div class:list={["timeline-item scroll-reveal relative flex flex-col md:flex-row gap-4 md:gap-0 pb-16 last:pb-0", i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse']}>
+      <!-- Dot -->
+      <div class="absolute left-0 md:left-1/2 w-3 h-3 rounded-full border-2 translate-x-[-5.5px] md:translate-x-[-6px] mt-1.5 transition-all duration-500 z-10" style="background: var(--bg); border-color: var(--border);" data-dot></div>
+
+      <!-- Content -->
+      <div class:list={["md:w-1/2 pl-8 md:pl-0", i % 2 === 0 ? 'md:pr-12' : 'md:pl-12']}>
+        <div class="card-hover p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+          <span class="text-xs tracking-[0.15em] uppercase font-medium" style="color: var(--color-accent);">{item.date}</span>
+          <h3 class="text-lg mt-2 mb-2" style="font-family: var(--font-heading); color: var(--text);">{item.title}</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">{item.description}</p>
+        </div>
+      </div>
+
+      <!-- Spacer for opposite side -->
+      <div class="hidden md:block md:w-1/2"></div>
+    </div>
+  ))}
+</div>

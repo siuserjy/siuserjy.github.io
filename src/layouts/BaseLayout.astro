@@ -4,11 +4,13 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  showProgress?: boolean;
 }
 
 const {
-  title = 'XingHui - 思考、创造、记录',
-  description = '一个关于技术、思考与创造的个人空间'
+  title = 'siuser小伟 - 思考、创造、记录',
+  description = '一个关于技术、思考与创造的个人空间',
+  showProgress = false
 } = Astro.props;
 ---
 
@@ -33,11 +35,153 @@ const {
     const theme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
   </script>
+
+  <!-- Loading screen styles (inline to avoid FOUC) -->
+  <style>
+    /* ===== Loading Screen ===== */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      transition: opacity 0.5s ease;
+    }
+    .loading-screen.loaded {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Animated lines box */
+    .loading-box {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 2rem;
+    }
+    .loading-line {
+      position: absolute;
+      background: var(--color-accent);
+    }
+    /* Top line: slides right */
+    .loading-line-1 {
+      top: 0; left: 0;
+      width: 0; height: 2px;
+      animation: line-h 1.2s ease-in-out infinite;
+    }
+    /* Right line: slides down */
+    .loading-line-2 {
+      top: 0; right: 0;
+      width: 2px; height: 0;
+      animation: line-v 1.2s ease-in-out 0.3s infinite;
+    }
+    /* Bottom line: slides left */
+    .loading-line-3 {
+      bottom: 0; right: 0;
+      width: 0; height: 2px;
+      animation: line-h-rev 1.2s ease-in-out 0.6s infinite;
+    }
+    /* Left line: slides up */
+    .loading-line-4 {
+      bottom: 0; left: 0;
+      width: 2px; height: 0;
+      animation: line-v-rev 1.2s ease-in-out 0.9s infinite;
+    }
+    @keyframes line-h {
+      0% { width: 0; left: 0; }
+      50% { width: 100%; left: 0; }
+      100% { width: 0; left: 100%; }
+    }
+    @keyframes line-v {
+      0% { height: 0; top: 0; }
+      50% { height: 100%; top: 0; }
+      100% { height: 0; top: 100%; }
+    }
+    @keyframes line-h-rev {
+      0% { width: 0; right: 0; }
+      50% { width: 100%; right: 0; }
+      100% { width: 0; right: 100%; }
+    }
+    @keyframes line-v-rev {
+      0% { height: 0; bottom: 0; }
+      50% { height: 100%; bottom: 0; }
+      100% { height: 0; bottom: 100%; }
+    }
+
+    /* Center letter */
+    .loading-letter {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      animation: letter-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes letter-pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Loading text with letter animation */
+    .loading-text {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      color: var(--text-secondary);
+      overflow: hidden;
+    }
+    .loading-text span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: letter-rise 0.4s ease forwards;
+    }
+  </style>
 </head>
 <body class="grain min-h-screen flex flex-col antialiased">
-  <slot />
 
-  <!-- Theme toggle script -->
+  <!-- ===== Loading Screen ===== -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-box">
+      <div class="loading-line loading-line-1"></div>
+      <div class="loading-line loading-line-2"></div>
+      <div class="loading-line loading-line-3"></div>
+      <div class="loading-line loading-line-4"></div>
+      <div class="loading-letter">X</div>
+    </div>
+    <div class="loading-text" id="loading-text"></div>
+  </div>
+
+  <!-- ===== Reading Progress Bar ===== -->
+  {showProgress && (
+    <div id="progress-bar" class="fixed top-0 left-0 h-[2px] z-[99998] transition-[width] duration-75" style="width: 0%; background: var(--color-accent);"></div>
+  )}
+
+  <!-- ===== Particle Canvas ===== -->
+  <canvas id="particles-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- ===== Page Content ===== -->
+  <div class="relative z-10 page-content">
+    <slot />
+  </div>
+
+  <!-- ===== Back to Top ===== -->
+  <button id="back-to-top" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
+
+  <!-- ====== Scripts ====== -->
+
+  <!-- Theme toggle -->
   <script is:inline>
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme');
@@ -47,5 +191,159 @@ const {
     }
     window.toggleTheme = toggleTheme;
   </script>
+
+  <!-- Loading screen: letter-by-letter text + auto dismiss -->
+  <script is:inline>
+    (function() {
+      const text = 'SIUSER BLOG';
+      const el = document.getElementById('loading-text');
+      if (el) {
+        text.split('').forEach((ch, i) => {
+          const span = document.createElement('span');
+          span.textContent = ch === ' ' ? '\u00A0' : ch;
+          span.style.animationDelay = (0.3 + i * 0.06) + 's';
+          el.appendChild(span);
+        });
+      }
+
+      let dismissed = false;
+      function dismiss() {
+        if (dismissed) return;
+        dismissed = true;
+        const ls = document.getElementById('loading-screen');
+        if (ls) {
+          ls.classList.add('loaded');
+          setTimeout(() => { ls.style.display = 'none'; }, 600);
+        }
+      }
+
+      // Dismiss after load + small delay, or force after 3s
+      window.addEventListener('load', () => setTimeout(dismiss, 800));
+      setTimeout(dismiss, 3000);
+    })();
+  </script>
+
+  <!-- Floating Particles (with mouse interaction like iamyukino) -->
+  <script is:inline>
+    (function() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let w, h;
+      let mouseX = -1000, mouseY = -1000;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+      document.addEventListener('mouseleave', () => { mouseX = -1000; mouseY = -1000; });
+
+      class Particle {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.size = Math.random() * 1.5 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.3;
+          this.speedY = (Math.random() - 0.5) * 0.3;
+          this.opacity = Math.random() * 0.3 + 0.1;
+          this.fadeSpeed = Math.random() * 0.005 + 0.002;
+          this.fadeDir = 1;
+        }
+        update() {
+          // Mouse interaction: gentle attraction
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150 && dist > 0) {
+            this.x += dx * 0.003;
+            this.y += dy * 0.003;
+          }
+
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.opacity += this.fadeSpeed * this.fadeDir;
+          if (this.opacity >= 0.4) this.fadeDir = -1;
+          if (this.opacity <= 0.05) this.fadeDir = 1;
+          if (this.x < -10 || this.x > w + 10 || this.y < -10 || this.y > h + 10) this.reset();
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(201, 169, 110, ${this.opacity})`;
+          ctx.fill();
+        }
+      }
+
+      const count = Math.min(40, Math.floor(w * h / 25000));
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+
+      // Draw connecting lines between nearby particles
+      function drawLines() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              const alpha = (1 - dist / 120) * 0.08;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(201, 169, 110, ${alpha})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        drawLines();
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
+
+  <!-- Back to Top visibility -->
+  <script is:inline>
+    (function() {
+      const btt = document.getElementById('back-to-top');
+      if (!btt) return;
+      window.addEventListener('scroll', () => {
+        btt.classList.toggle('visible', window.scrollY > 400);
+      });
+    })();
+  </script>
+
+  <!-- Reading Progress -->
+  <script is:inline>
+    (function() {
+      const bar = document.getElementById('progress-bar');
+      if (!bar) return;
+      window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+      });
+    })();
+  </script>
+
+  <!-- Tab visibility easter egg (like iamyukino) -->
+  <script is:inline>
+    (function() {
+      const originalTitle = document.title;
+      document.addEventListener('visibilitychange', () => {
+        document.title = document.hidden ? '(つ≧▽≦)つ 快回来~' : originalTitle;
+      });
+    })();
+  </script>
+
 </body>
 </html>

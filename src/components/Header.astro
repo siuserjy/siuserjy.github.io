@@ -1,40 +1,62 @@
 ---
 const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/';
 
-const navLinks = [
+const homeLinks = [
+  { href: '#home', label: '首页' },
+  { href: '#about', label: '关于' },
+  { href: '#timeline', label: '历程' },
+  { href: '#blog', label: '文章' },
+  { href: '#contact', label: '联系' },
+];
+
+const pageLinks = [
   { href: '/', label: '首页' },
   { href: '/blog', label: '文章' },
   { href: '/about', label: '关于' },
 ];
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style="background: color-mix(in srgb, var(--bg) 80%, transparent);">
-  <nav class="mx-auto flex items-center justify-between px-6 py-4" style="max-width: var(--container-max);">
+<header id="nav-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style="background: transparent;">
+  <nav class="mx-auto flex items-center justify-between px-6 py-5 transition-all duration-300" style="max-width: var(--container-max);" id="nav-inner">
     <!-- Logo -->
     <a href="/" class="group flex items-center gap-2">
       <span class="text-lg font-semibold tracking-tight" style="color: var(--text); font-family: var(--font-heading);">
-        XingHui
+        siuser小伟
       </span>
       <span class="text-xs tracking-widest uppercase" style="color: var(--color-accent);">
         Blog
       </span>
     </a>
 
-    <!-- Navigation -->
-    <div class="flex items-center gap-8">
-      {navLinks.map(link => (
-        <a
-          href={link.href}
-          class:list={[
-            "text-sm tracking-wide transition-colors duration-200 hover:text-[var(--color-accent)]",
-            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
-              ? "text-[var(--color-accent)]"
-              : "text-[var(--text-secondary)]"
-          ]}
-        >
-          {link.label}
-        </a>
-      ))}
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center gap-8">
+      {isHome ? (
+        homeLinks.map(link => (
+          <a
+            href={link.href}
+            class="nav-link text-sm tracking-wide transition-colors duration-200 hover:text-[var(--color-accent)]"
+            style="color: var(--text-secondary);"
+            data-section={link.href.replace('#', '')}
+          >
+            {link.label}
+          </a>
+        ))
+      ) : (
+        pageLinks.map(link => (
+          <a
+            href={link.href}
+            class:list={[
+              "text-sm tracking-wide transition-colors duration-200 hover:text-[var(--color-accent)]",
+              currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+                ? "text-[var(--color-accent)]"
+                : "text-[var(--text-secondary)]"
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      )}
 
       <!-- Theme Toggle -->
       <button
@@ -42,30 +64,133 @@ const navLinks = [
         class="p-2 rounded-full transition-colors duration-200 hover:bg-[var(--surface-2)]"
         aria-label="切换主题"
       >
-        <!-- Sun icon (shown in dark mode) -->
         <svg class="w-4 h-4 dark-icon" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
-        <!-- Moon icon (shown in light mode) -->
         <svg class="w-4 h-4 light-icon" style="color: var(--text-secondary); display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       </button>
     </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden p-2 relative w-8 h-8 flex flex-col items-center justify-center gap-1.5" aria-label="菜单">
+      <span class="menu-line w-5 h-[1.5px] transition-all duration-300" style="background: var(--text);"></span>
+      <span class="menu-line w-5 h-[1.5px] transition-all duration-300" style="background: var(--text);"></span>
+      <span class="menu-line w-3.5 h-[1.5px] transition-all duration-300 self-end" style="background: var(--text);"></span>
+    </button>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="md:hidden overflow-hidden transition-all duration-300" style="max-height: 0; background: var(--bg);">
+    <div class="px-6 py-4 flex flex-col gap-4">
+      {isHome ? (
+        homeLinks.map(link => (
+          <a href={link.href} class="mobile-nav-link text-sm tracking-wide py-2 transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            {link.label}
+          </a>
+        ))
+      ) : (
+        pageLinks.map(link => (
+          <a href={link.href} class="text-sm tracking-wide py-2 transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            {link.label}
+          </a>
+        ))
+      )}
+    </div>
+  </div>
 </header>
 
 <!-- Spacer for fixed header -->
-<div class="h-16"></div>
+<div class="h-0"></div>
 
 <script is:inline>
+  // Theme icons
   function updateIcons() {
     const theme = document.documentElement.getAttribute('data-theme');
     document.querySelectorAll('.dark-icon').forEach(el => el.style.display = theme === 'dark' ? 'block' : 'none');
     document.querySelectorAll('.light-icon').forEach(el => el.style.display = theme === 'light' ? 'block' : 'none');
   }
   updateIcons();
-
   const observer = new MutationObserver(updateIcons);
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // Navbar scroll effect
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('nav-header');
+    const inner = document.getElementById('nav-inner');
+    if (window.scrollY > 80) {
+      header.style.background = 'color-mix(in srgb, var(--bg) 85%, transparent)';
+      header.style.backdropFilter = 'blur(12px)';
+      header.style.webkitBackdropFilter = 'blur(12px)';
+      header.style.boxShadow = '0 1px 0 var(--border)';
+      inner.style.paddingTop = '0.75rem';
+      inner.style.paddingBottom = '0.75rem';
+    } else {
+      header.style.background = 'transparent';
+      header.style.backdropFilter = 'none';
+      header.style.webkitBackdropFilter = 'none';
+      header.style.boxShadow = 'none';
+      inner.style.paddingTop = '1.25rem';
+      inner.style.paddingBottom = '1.25rem';
+    }
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Close mobile menu
+        const menu = document.getElementById('mobile-menu');
+        if (menu) menu.style.maxHeight = '0';
+      }
+    });
+  });
+
+  // Active nav link on scroll (home page only)
+  const sections = document.querySelectorAll('section[id]');
+  if (sections.length > 0) {
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const top = section.offsetTop - 120;
+        if (window.scrollY >= top) current = section.getAttribute('id');
+      });
+      document.querySelectorAll('.nav-link').forEach(link => {
+        const section = link.getAttribute('data-section');
+        if (section === current) {
+          link.style.color = 'var(--color-accent)';
+        } else {
+          link.style.color = 'var(--text-secondary)';
+        }
+      });
+    });
+  }
+
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (menuBtn && mobileMenu) {
+    let isOpen = false;
+    menuBtn.addEventListener('click', () => {
+      isOpen = !isOpen;
+      mobileMenu.style.maxHeight = isOpen ? '300px' : '0';
+      const lines = menuBtn.querySelectorAll('.menu-line');
+      if (isOpen) {
+        lines[0].style.transform = 'rotate(45deg) translate(3px, 3px)';
+        lines[1].style.opacity = '0';
+        lines[2].style.transform = 'rotate(-45deg) translate(3px, -3px)';
+        lines[2].style.width = '1.25rem';
+      } else {
+        lines[0].style.transform = 'none';
+        lines[1].style.opacity = '1';
+        lines[2].style.transform = 'none';
+        lines[2].style.width = '0.875rem';
+      }
+    });
+  }
 </script>

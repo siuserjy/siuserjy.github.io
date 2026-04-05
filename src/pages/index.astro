@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BlogCard from '../components/BlogCard.astro';
+import Timeline from '../components/Timeline.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog'))
@@ -15,72 +16,174 @@ const posts = (await getCollection('blog'))
   <Header />
 
   <main class="flex-1">
-    <!-- Hero Section -->
-    <section class="mx-auto px-6 pt-20 pb-24 md:pt-32 md:pb-32" style="max-width: var(--container-max);">
-      <div class="max-w-2xl">
+
+    <!-- ==================== HERO ==================== -->
+    <section id="home" class="relative min-h-screen flex items-center overflow-hidden">
+
+      <!-- Hero Background: Aurora Gold -->
+      <div class="absolute inset-0 z-0 overflow-hidden">
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full"></canvas>
+        <!-- Bottom fade -->
+        <div class="absolute bottom-0 left-0 right-0 h-48" style="background: linear-gradient(to top, var(--bg), transparent);"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 mx-auto px-6 w-full" style="max-width: var(--container-max);">
+      <div class="max-w-2xl py-20">
         <!-- Greeting -->
-        <p class="animate-fade-in stagger-1 text-sm tracking-[0.2em] uppercase mb-6" style="color: var(--color-accent);">
-          Welcome
+        <p class="scroll-reveal text-sm tracking-[0.2em] uppercase mb-6" style="color: var(--color-accent);">
+          Welcome to my space
         </p>
 
         <!-- Name -->
-        <h1 class="animate-fade-in stagger-2 text-4xl md:text-6xl lg:text-7xl font-bold mb-6" style="font-family: var(--font-heading); color: var(--text);">
+        <h1 class="scroll-reveal text-4xl md:text-6xl lg:text-7xl font-bold mb-6" style="font-family: var(--font-heading); color: var(--text); line-height: 1.1;">
           你好，我是<br/>
-          <span style="color: var(--color-accent);">星辉</span>
+          <span class="inline-block mt-2" style="color: var(--color-accent);">siuser小伟</span>
         </h1>
 
-        <!-- Tagline -->
-        <p class="animate-fade-in stagger-3 text-lg md:text-xl leading-relaxed mb-8" style="color: var(--text-secondary);">
-          探索技术的深度，记录思考的痕迹。<br/>
-          在创造中寻找意义，在分享中传递价值。
-        </p>
+        <!-- Typing effect -->
+        <div class="scroll-reveal h-8 mb-8 flex items-center">
+          <span class="text-lg md:text-xl" style="color: var(--text-secondary); font-family: var(--font-heading);">
+            <span id="typewriter"></span>
+            <span class="typing-cursor" style="color: var(--color-accent);">|</span>
+          </span>
+        </div>
 
         <!-- Divider -->
-        <div class="animate-fade-in stagger-4 divider-accent mb-8"></div>
+        <div class="scroll-reveal divider-accent mb-8"></div>
 
-        <!-- CTA -->
-        <div class="animate-fade-in stagger-5 flex items-center gap-6">
-          <a href="/blog" class="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wider uppercase rounded-lg transition-all duration-300 hover:translate-y-[-1px]" style="background: var(--color-accent); color: var(--color-bg-dark); font-weight: 500;">
+        <!-- CTA Buttons -->
+        <div class="scroll-reveal flex flex-wrap items-center gap-4">
+          <a href="#blog" class="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wider uppercase rounded-lg transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg" style="background: var(--color-accent); color: var(--color-bg-dark); font-weight: 500;">
             浏览文章
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
-          <a href="/about" class="text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          <a href="#about" class="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wider uppercase rounded-lg border transition-all duration-300 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]" style="border-color: var(--border); color: var(--text-secondary);">
             了解更多
+          </a>
+          <a href="https://github.com/siuserjy" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-3 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
           </a>
         </div>
       </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce-slow z-10">
+        <span class="text-xs tracking-widest uppercase" style="color: var(--text-secondary); opacity: 0.5;">Scroll</span>
+        <svg class="w-4 h-4" style="color: var(--text-secondary); opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7" />
+        </svg>
+      </div>
+      </div><!-- close content wrapper -->
     </section>
 
-    <!-- Decorative line -->
+    <!-- Section divider -->
     <div class="mx-auto px-6" style="max-width: var(--container-max);">
       <div class="border-t" style="border-color: var(--border);"></div>
     </div>
 
-    <!-- Latest Posts -->
-    <section class="mx-auto px-6 py-20 md:py-24" style="max-width: var(--container-max);">
-      <div class="flex items-end justify-between mb-12">
+    <!-- ==================== ABOUT ==================== -->
+    <section id="about" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
+      <!-- Section Header -->
+      <div class="scroll-reveal mb-16">
+        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">About</p>
+        <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);">关于我</h2>
+        <div class="divider-accent mt-4"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+        <!-- Left: Introduction -->
+        <div class="scroll-reveal space-y-5">
+          <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+            你好，我是 siuser小伟。一个对技术和商业都保持热情的探索者。
+          </p>
+          <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+            我相信最好的产品来自于对问题的深刻理解，而不仅仅是技术的堆砌。在这个 AI 快速发展的时代，我专注于寻找技术与真实需求之间的交汇点。
+          </p>
+          <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+            这个空间记录了我的思考、学习与创造。希望你在这里能找到一些有价值的内容。
+          </p>
+        </div>
+
+        <!-- Right: Info Cards -->
+        <div class="scroll-reveal grid grid-cols-2 gap-4">
+          <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">01</div>
+            <h3 class="text-sm font-medium mb-1" style="color: var(--text);">技术探索</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">AI / 全栈开发 / 产品工程</p>
+          </div>
+          <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">02</div>
+            <h3 class="text-sm font-medium mb-1" style="color: var(--text);">商业思考</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">创业 / 产品策略 / 商业模式</p>
+          </div>
+          <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">03</div>
+            <h3 class="text-sm font-medium mb-1" style="color: var(--text);">持续学习</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">阅读 / 写作 / 跨领域探索</p>
+          </div>
+          <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">04</div>
+            <h3 class="text-sm font-medium mb-1" style="color: var(--text);">创造价值</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">用产品解决真实问题</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section divider -->
+    <div class="mx-auto px-6" style="max-width: var(--container-max);">
+      <div class="border-t" style="border-color: var(--border);"></div>
+    </div>
+
+    <!-- ==================== TIMELINE ==================== -->
+    <section id="timeline" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
+      <!-- Section Header -->
+      <div class="scroll-reveal mb-16">
+        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Journey</p>
+        <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);">成长历程</h2>
+        <div class="divider-accent mt-4"></div>
+      </div>
+
+      <Timeline />
+    </section>
+
+    <!-- Section divider -->
+    <div class="mx-auto px-6" style="max-width: var(--container-max);">
+      <div class="border-t" style="border-color: var(--border);"></div>
+    </div>
+
+    <!-- ==================== BLOG ==================== -->
+    <section id="blog" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
+      <!-- Section Header -->
+      <div class="scroll-reveal flex items-end justify-between mb-16">
         <div>
           <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Latest</p>
-          <h2 class="text-2xl md:text-3xl" style="font-family: var(--font-heading); color: var(--text);">
-            最新文章
-          </h2>
+          <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);">最新文章</h2>
+          <div class="divider-accent mt-4"></div>
         </div>
-        <a href="/blog" class="text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
-          查看全部 &rarr;
+        <a href="/blog" class="hidden md:inline-flex items-center gap-1.5 text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          查看全部
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
         </a>
       </div>
 
       <div class="grid gap-6">
         {posts.map(post => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            date={post.data.date.toISOString()}
-            tags={post.data.tags}
-            slug={post.id}
-          />
+          <div class="scroll-reveal">
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date.toISOString()}
+              tags={post.data.tags}
+              slug={post.id}
+            />
+          </div>
         ))}
       </div>
 
@@ -89,15 +192,25 @@ const posts = (await getCollection('blog'))
           <p class="text-lg" style="color: var(--text-secondary);">文章即将上线，敬请期待。</p>
         </div>
       )}
+
+      <div class="scroll-reveal mt-8 md:hidden text-center">
+        <a href="/blog" class="inline-flex items-center gap-1.5 text-sm tracking-wider uppercase transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          查看全部文章
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
     </section>
 
-    <!-- Quote Section -->
+    <!-- Section divider -->
     <div class="mx-auto px-6" style="max-width: var(--container-max);">
       <div class="border-t" style="border-color: var(--border);"></div>
     </div>
 
+    <!-- ==================== QUOTE ==================== -->
     <section class="mx-auto px-6 py-20 md:py-24 text-center" style="max-width: var(--container-max);">
-      <blockquote class="max-w-xl mx-auto">
+      <blockquote class="scroll-reveal max-w-xl mx-auto">
         <p class="text-xl md:text-2xl italic leading-relaxed" style="font-family: var(--font-heading); color: var(--text-secondary);">
           "The best way to predict the future is to create it."
         </p>
@@ -106,7 +219,201 @@ const posts = (await getCollection('blog'))
         </footer>
       </blockquote>
     </section>
+
+    <!-- Section divider -->
+    <div class="mx-auto px-6" style="max-width: var(--container-max);">
+      <div class="border-t" style="border-color: var(--border);"></div>
+    </div>
+
+    <!-- ==================== CONTACT ==================== -->
+    <section id="contact" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
+      <div class="scroll-reveal max-w-xl mx-auto text-center">
+        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Contact</p>
+        <h2 class="text-3xl md:text-4xl mb-6" style="font-family: var(--font-heading); color: var(--text);">保持联系</h2>
+        <div class="divider-accent mx-auto mb-8"></div>
+        <p class="text-base leading-relaxed mb-10" style="color: var(--text-secondary);">
+          如果你对我的内容感兴趣，或想探讨合作的可能性，<br class="hidden md:block"/>欢迎通过以下方式联系我。
+        </p>
+
+        <div class="flex items-center justify-center gap-6">
+          <a href="https://github.com/siuserjy" target="_blank" rel="noopener" class="group flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 hover:border-[var(--color-accent)]" style="border-color: var(--border);">
+            <svg class="w-6 h-6 transition-colors duration-200 group-hover:text-[var(--color-accent)]" style="color: var(--text-secondary);" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            <span class="text-xs" style="color: var(--text-secondary);">GitHub</span>
+          </a>
+          <a href="mailto:your@email.com" class="group flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 hover:border-[var(--color-accent)]" style="border-color: var(--border);">
+            <svg class="w-6 h-6 transition-colors duration-200 group-hover:text-[var(--color-accent)]" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span class="text-xs" style="color: var(--text-secondary);">Email</span>
+          </a>
+          <a href="/rss.xml" class="group flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 hover:border-[var(--color-accent)]" style="border-color: var(--border);">
+            <svg class="w-6 h-6 transition-colors duration-200 group-hover:text-[var(--color-accent)]" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+            <span class="text-xs" style="color: var(--text-secondary);">RSS</span>
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <Footer />
+
+  <!-- Typewriter Effect -->
+  <script is:inline>
+    const phrases = [
+      '探索技术的深度，记录思考的痕迹。',
+      '在创造中寻找意义。',
+      'Building things that matter.',
+      '用产品解决真实问题。',
+    ];
+    let phraseIdx = 0, charIdx = 0, isDeleting = false;
+    const el = document.getElementById('typewriter');
+
+    function type() {
+      if (!el) return;
+      const current = phrases[phraseIdx];
+
+      if (isDeleting) {
+        el.textContent = current.substring(0, charIdx - 1);
+        charIdx--;
+      } else {
+        el.textContent = current.substring(0, charIdx + 1);
+        charIdx++;
+      }
+
+      let delay = isDeleting ? 40 : 80;
+
+      if (!isDeleting && charIdx === current.length) {
+        delay = 2500;
+        isDeleting = true;
+      } else if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        delay = 500;
+      }
+
+      setTimeout(type, delay);
+    }
+
+    type();
+  </script>
+
+  <!-- Hero Canvas: Animated Mesh Gradient -->
+  <script is:inline>
+    (function() {
+      const canvas = document.getElementById('hero-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w, h, time = 0;
+
+      function resize() {
+        w = canvas.width = canvas.offsetWidth;
+        h = canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+
+      function draw() {
+        time += 0.003;
+        ctx.clearRect(0, 0, w, h);
+
+        // Base fill
+        if (isDark()) {
+          ctx.fillStyle = '#08080a';
+        } else {
+          ctx.fillStyle = '#faf8f5';
+        }
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw multiple flowing gradient layers
+        const blobs = [
+          { x: 0.7, y: 0.3, r: 0.45, speed: 1, color: isDark() ? [201,169,110] : [180,150,80] , alpha: isDark() ? 0.25 : 0.15 },
+          { x: 0.2, y: 0.7, r: 0.4,  speed: 0.7, color: isDark() ? [160,130,80] : [160,130,60],  alpha: isDark() ? 0.18 : 0.1 },
+          { x: 0.5, y: 0.2, r: 0.35, speed: 1.3, color: isDark() ? [180,140,70] : [170,140,70],  alpha: isDark() ? 0.12 : 0.08 },
+          { x: 0.8, y: 0.8, r: 0.3,  speed: 0.9, color: isDark() ? [140,100,50] : [150,120,60],  alpha: isDark() ? 0.15 : 0.08 },
+        ];
+
+        blobs.forEach(b => {
+          const cx = w * (b.x + Math.sin(time * b.speed) * 0.08);
+          const cy = h * (b.y + Math.cos(time * b.speed * 0.8) * 0.06);
+          const r = Math.min(w, h) * b.r;
+
+          const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+          grad.addColorStop(0, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.alpha})`);
+          grad.addColorStop(0.5, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.alpha * 0.4})`);
+          grad.addColorStop(1, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},0)`);
+
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+        });
+
+        // Subtle noise grain overlay
+        if (isDark()) {
+          for (let i = 0; i < 800; i++) {
+            const x = Math.random() * w;
+            const y = Math.random() * h;
+            const a = Math.random() * 0.04;
+            ctx.fillStyle = `rgba(201,169,110,${a})`;
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+
+        // Grid lines
+        ctx.strokeStyle = isDark() ? 'rgba(201,169,110,0.04)' : 'rgba(146,112,42,0.04)';
+        ctx.lineWidth = 0.5;
+        const gridSize = 80;
+        for (let x = 0; x < w; x += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+          ctx.stroke();
+        }
+        for (let y = 0; y < h; y += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    })();
+  </script>
+
+  <!-- Scroll Reveal Animation -->
+  <script is:inline>
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Timeline active line & dots
+    const timelineDots = document.querySelectorAll('[data-dot]');
+    const timelineLine = document.querySelector('.timeline-active-line');
+    if (timelineLine && timelineDots.length > 0) {
+      const dotObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.borderColor = 'var(--color-accent)';
+            entry.target.style.background = 'var(--color-accent)';
+          }
+        });
+      }, { threshold: 0.5 });
+      timelineDots.forEach(dot => dotObserver.observe(dot));
+    }
+  </script>
 </BaseLayout>

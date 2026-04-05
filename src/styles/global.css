@@ -221,6 +221,105 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
+/* Scroll reveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.scroll-reveal:nth-child(2) { transition-delay: 0.1s; }
+.scroll-reveal:nth-child(3) { transition-delay: 0.2s; }
+.scroll-reveal:nth-child(4) { transition-delay: 0.3s; }
+
+/* Typing cursor blink */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.typing-cursor {
+  animation: blink 1s infinite;
+  font-weight: 300;
+}
+
+/* Bounce slow (scroll indicator) */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* Back to top button */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 40;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+/* Custom Cursor — pure CSS, zero delay, browser-native rendering */
+/* Gold diamond cursor via inline SVG data URI */
+@media (pointer: fine) {
+  * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='4' fill='%23c9a96e' opacity='0.9'/%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23c9a96e' stroke-width='1' opacity='0.3'/%3E%3C/svg%3E") 10 10, auto !important;
+  }
+  a, button, [role="button"], input, textarea, select, label[for] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5' fill='%23c9a96e' opacity='0.9'/%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%23c9a96e' stroke-width='1.5' opacity='0.5'/%3E%3C/svg%3E") 12 12, pointer !important;
+  }
+}
+
+/* Page transition */
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-content {
+  animation: page-fade-in 0.5s ease-out;
+}
+
+/* Loading text letter animation */
+@keyframes letter-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero canvas is now rendered via JS in index.astro */
+
 /* Subtle grain texture overlay */
 .grain::before {
   content: "";

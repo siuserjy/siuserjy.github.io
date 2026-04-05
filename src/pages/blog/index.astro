@@ -13,7 +13,7 @@ const posts = (await getCollection('blog'))
 const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
 ---
 
-<BaseLayout title="文章 - XingHui" description="关于技术、思考与创造的文章集合">
+<BaseLayout title="文章 - siuser小伟" description="关于技术、思考与创造的文章集合">
   <Header />
 
   <main class="flex-1">
