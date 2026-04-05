@@ -1,0 +1,271 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="写新文章 - 后台管理">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold mb-1" style="font-family: var(--font-heading); color: var(--text);">写新文章</h1>
+    <p class="text-sm" style="color: var(--text-secondary);">使用 Markdown 编写你的文章</p>
+  </div>
+
+  <form id="post-form" class="space-y-6">
+    <!-- Top Bar: Title + Meta -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2">
+        <label class="block text-xs tracking-wider uppercase mb-2" style="color: var(--text-secondary);">文章标题</label>
+        <input
+          type="text"
+          name="title"
+          required
+          placeholder="输入文章标题..."
+          class="w-full px-4 py-3 rounded-lg border text-base outline-none transition-all duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text); font-family: var(--font-heading);"
+        />
+      </div>
+      <div>
+        <label class="block text-xs tracking-wider uppercase mb-2" style="color: var(--text-secondary);">文件名（slug）</label>
+        <input
+          type="text"
+          name="slug"
+          required
+          placeholder="my-post-slug"
+          class="w-full px-4 py-3 rounded-lg border text-sm outline-none transition-all duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text);"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-xs tracking-wider uppercase mb-2" style="color: var(--text-secondary);">摘要描述</label>
+        <input
+          type="text"
+          name="description"
+          required
+          placeholder="简短描述这篇文章..."
+          class="w-full px-4 py-3 rounded-lg border text-sm outline-none transition-all duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text);"
+        />
+      </div>
+      <div>
+        <label class="block text-xs tracking-wider uppercase mb-2" style="color: var(--text-secondary);">标签（逗号分隔）</label>
+        <input
+          type="text"
+          name="tags"
+          placeholder="技术, AI, 随笔"
+          class="w-full px-4 py-3 rounded-lg border text-sm outline-none transition-all duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text);"
+        />
+      </div>
+      <div class="flex items-end gap-4">
+        <div class="flex-1">
+          <label class="block text-xs tracking-wider uppercase mb-2" style="color: var(--text-secondary);">日期</label>
+          <input
+            type="date"
+            name="date"
+            class="w-full px-4 py-3 rounded-lg border text-sm outline-none transition-all duration-200 focus:border-[var(--color-accent)]"
+            style="background: var(--surface); border-color: var(--border); color: var(--text);"
+          />
+        </div>
+        <label class="flex items-center gap-2 pb-3 cursor-pointer select-none">
+          <input type="checkbox" name="draft" class="accent-[var(--color-accent)] w-4 h-4" />
+          <span class="text-xs" style="color: var(--text-secondary);">草稿</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs tracking-wider uppercase" style="color: var(--text-secondary);">文章内容（Markdown）</label>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btn-edit" class="text-xs px-3 py-1 rounded-md transition-colors" style="background: var(--surface-2); color: var(--color-accent);">编辑</button>
+          <button type="button" id="btn-preview" class="text-xs px-3 py-1 rounded-md transition-colors" style="color: var(--text-secondary);">预览</button>
+          <button type="button" id="btn-split" class="text-xs px-3 py-1 rounded-md transition-colors hidden md:inline-flex" style="color: var(--text-secondary);">分屏</button>
+        </div>
+      </div>
+
+      <div id="editor-container" class="grid grid-cols-1" style="min-height: 500px;">
+        <textarea
+          name="content"
+          id="editor"
+          placeholder="开始写作..."
+          class="w-full h-full px-5 py-4 rounded-xl border text-sm leading-relaxed outline-none resize-none transition-all duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text); font-family: 'JetBrains Mono', 'Fira Code', monospace; min-height: 500px; tab-size: 2;"
+        ></textarea>
+        <div
+          id="preview"
+          class="hidden w-full h-full px-5 py-4 rounded-xl border overflow-y-auto prose"
+          style="background: var(--surface); border-color: var(--border); min-height: 500px;"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex items-center justify-between border-t pt-6" style="border-color: var(--border);">
+      <a href="/admin/posts" class="text-xs transition-colors hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+        &larr; 返回文章列表
+      </a>
+      <div class="flex items-center gap-3">
+        <span id="status-msg" class="text-xs" style="color: var(--text-secondary);"></span>
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg"
+          style="background: var(--color-accent); color: var(--color-bg-dark);"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          发布文章
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Simple Markdown Preview (no external deps) -->
+  <script is:inline>
+    // Auto-generate slug from title
+    const titleInput = document.querySelector('input[name="title"]');
+    const slugInput = document.querySelector('input[name="slug"]');
+    let slugManuallyEdited = false;
+
+    slugInput.addEventListener('input', () => { slugManuallyEdited = true; });
+    titleInput.addEventListener('input', () => {
+      if (!slugManuallyEdited) {
+        slugInput.value = titleInput.value
+          .toLowerCase()
+          .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+          .replace(/[\s]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+      }
+    });
+
+    // Default date to today
+    const dateInput = document.querySelector('input[name="date"]');
+    if (!dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    // Editor mode toggle
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const container = document.getElementById('editor-container');
+    const btnEdit = document.getElementById('btn-edit');
+    const btnPreview = document.getElementById('btn-preview');
+    const btnSplit = document.getElementById('btn-split');
+
+    function setMode(mode) {
+      const buttons = [btnEdit, btnPreview, btnSplit];
+      buttons.forEach(b => { b.style.background = ''; b.style.color = 'var(--text-secondary)'; });
+
+      if (mode === 'edit') {
+        editor.classList.remove('hidden');
+        preview.classList.add('hidden');
+        container.style.gridTemplateColumns = '1fr';
+        btnEdit.style.background = 'var(--surface-2)';
+        btnEdit.style.color = 'var(--color-accent)';
+      } else if (mode === 'preview') {
+        editor.classList.add('hidden');
+        preview.classList.remove('hidden');
+        container.style.gridTemplateColumns = '1fr';
+        btnPreview.style.background = 'var(--surface-2)';
+        btnPreview.style.color = 'var(--color-accent)';
+        renderPreview();
+      } else {
+        editor.classList.remove('hidden');
+        preview.classList.remove('hidden');
+        container.style.gridTemplateColumns = '1fr 1fr';
+        container.style.gap = '1rem';
+        btnSplit.style.background = 'var(--surface-2)';
+        btnSplit.style.color = 'var(--color-accent)';
+        renderPreview();
+      }
+    }
+
+    btnEdit.addEventListener('click', () => setMode('edit'));
+    btnPreview.addEventListener('click', () => setMode('preview'));
+    btnSplit.addEventListener('click', () => setMode('split'));
+
+    // Simple markdown to HTML
+    function md(text) {
+      return text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/^\> (.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/^---$/gm, '<hr/>')
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/^(.+)$/gm, (m) => {
+          if (m.startsWith('<')) return m;
+          return m;
+        });
+    }
+
+    function renderPreview() {
+      const raw = editor.value || '*还没有内容...*';
+      preview.innerHTML = '<div style="color: var(--text-secondary); line-height: 1.8;">' + md(raw) + '</div>';
+    }
+
+    editor.addEventListener('input', () => {
+      if (!preview.classList.contains('hidden')) renderPreview();
+    });
+
+    // Tab key support in textarea
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 2;
+      }
+    });
+
+    // Form submit
+    document.getElementById('post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusMsg = document.getElementById('status-msg');
+      statusMsg.textContent = '正在保存...';
+
+      const form = e.target;
+      const data = {
+        title: form.title.value,
+        slug: form.slug.value,
+        description: form.description.value,
+        tags: form.tags.value.split(',').map(t => t.trim()).filter(Boolean),
+        date: form.date.value,
+        draft: form.draft.checked,
+        content: form.content.value,
+      };
+
+      try {
+        const res = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          statusMsg.textContent = '保存成功！';
+          statusMsg.style.color = '#22c55e';
+          setTimeout(() => {
+            window.location.href = '/admin/posts';
+          }, 800);
+        } else {
+          const err = await res.json();
+          statusMsg.textContent = err.error || '保存失败';
+          statusMsg.style.color = '#ef4444';
+        }
+      } catch (err) {
+        statusMsg.textContent = '网络错误';
+        statusMsg.style.color = '#ef4444';
+      }
+    });
+  </script>
+</AdminLayout>
