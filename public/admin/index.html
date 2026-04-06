@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>后台管理 - siuser小伟</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    :root {
+      --accent: #c9a96e;
+      --accent-light: #d4b87a;
+      --accent-dark: #92702a;
+      --bg: #0a0a0b;
+      --surface: #141416;
+      --surface-2: #1a1a1e;
+      --border: #252529;
+      --text: #f5f5f4;
+      --text-sec: #a8a29e;
+      --font-heading: "Playfair Display", "Noto Serif SC", Georgia, serif;
+      --font-body: "Inter", "Noto Sans SC", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; }
+    ::selection { background: var(--accent); color: var(--bg); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* Layout */
+    .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(10,10,11,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .sidebar { position: fixed; left: 0; top: 56px; bottom: 0; width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 16px; overflow-y: auto; }
+    .main { margin-left: 220px; margin-top: 56px; padding: 32px; min-height: calc(100vh - 56px); }
+
+    /* Components */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,169,110,0.3); }
+    .btn-outline { background: transparent; color: var(--text-sec); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: transparent; color: var(--text-sec); border: 1px solid var(--border); }
+    .btn-danger:hover { border-color: #ef4444; color: #ef4444; }
+
+    .input { width: 100%; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; font-family: var(--font-body); }
+    .input:focus { border-color: var(--accent); }
+    .input-lg { font-size: 18px; padding: 12px 16px; font-family: var(--font-heading); }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 9999px; }
+    .badge-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .badge-gold { background: rgba(201,169,110,0.15); color: var(--accent); }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; color: var(--text-sec); text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; }
+    .nav-item:hover { background: var(--surface-2); color: var(--text); }
+    .nav-item.active { background: var(--surface-2); color: var(--accent); }
+    .nav-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-sec); padding: 0 12px; margin-bottom: 8px; }
+
+    .stat-card { padding: 20px; }
+    .stat-card .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sec); margin-bottom: 12px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; font-family: var(--font-heading); }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 12px 20px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: var(--text-sec); border-bottom: 1px solid var(--border); }
+    td { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface-2); }
+
+    /* Editor */
+    .editor-area { width: 100%; min-height: 500px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; line-height: 1.8; outline: none; resize: vertical; font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; tab-size: 2; }
+    .editor-area:focus { border-color: var(--accent); }
+    .preview-area { width: 100%; min-height: 500px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); overflow-y: auto; line-height: 1.8; color: var(--text-sec); }
+    .preview-area h1, .preview-area h2, .preview-area h3 { color: var(--text); font-family: var(--font-heading); margin: 1.5em 0 0.5em; }
+    .preview-area h1 { font-size: 1.8em; }
+    .preview-area h2 { font-size: 1.4em; }
+    .preview-area h3 { font-size: 1.15em; }
+    .preview-area p { margin-bottom: 1em; }
+    .preview-area strong { color: var(--text); }
+    .preview-area code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .preview-area blockquote { border-left: 3px solid var(--accent); padding-left: 16px; margin: 1.5em 0; font-style: italic; }
+    .preview-area ul, .preview-area ol { padding-left: 1.5em; margin-bottom: 1em; }
+    .preview-area li { margin-bottom: 0.3em; }
+    .preview-area hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+    .preview-area a { color: var(--accent); }
+
+    .editor-tabs { display: flex; gap: 4px; }
+    .editor-tab { padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; background: transparent; border: none; color: var(--text-sec); transition: all 0.2s; }
+    .editor-tab.active { background: var(--surface-2); color: var(--accent); }
+    .editor-grid { display: grid; gap: 16px; }
+
+    /* Toasts */
+    .toast { position: fixed; top: 72px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 13px; z-index: 100; animation: slideIn 0.3s ease; }
+    .toast-success { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .toast-error { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Login */
+    .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .login-box { width: 100%; max-width: 380px; padding: 0 16px; }
+    .login-logo { width: 64px; height: 64px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 24px; font-weight: 700; font-family: var(--font-heading); color: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 16px; }
+      .hide-mobile { display: none !important; }
+    }
+
+    .loading { display: flex; align-items: center; justify-content: center; padding: 60px; color: var(--text-sec); font-size: 13px; }
+    .fade-in { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // ===== Config =====
+    const REPO_OWNER = 'siuserjy';
+    const REPO_NAME = 'siuserjy.github.io';
+    const CONTENT_PATH = 'src/content/blog';
+    const BRANCH = 'main';
+
+    // ===== State =====
+    let state = {
+      page: 'login',
+      posts: [],
+      editPost: null,
+      loading: false,
+    };
+
+    function getToken() { return localStorage.getItem('gh_token'); }
+    function setToken(t) { localStorage.setItem('gh_token', t); }
+    function clearToken() { localStorage.removeItem('gh_token'); }
+
+    // ===== GitHub API =====
+    async function ghFetch(endpoint, options = {}) {
+      const token = getToken();
+      const res = await fetch(`https://api.github.com${endpoint}`, {
+        ...options,
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': `Bearer ${token}`,
+          ...(options.headers || {}),
+        },
+      });
+      if (res.status === 401) { clearToken(); navigate('login'); throw new Error('Token 无效'); }
+      return res;
+    }
+
+    async function loadPosts() {
+      state.loading = true;
+      render();
+      try {
+        const res = await ghFetch(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}?ref=${BRANCH}`);
+        if (!res.ok) { state.posts = []; state.loading = false; render(); return; }
+        const files = await res.json();
+        const mdFiles = files.filter(f => f.name.endsWith('.md'));
+
+        const posts = await Promise.all(mdFiles.map(async (f) => {
+          const r = await ghFetch(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${f.name}?ref=${BRANCH}`);
+          const data = await r.json();
+          const content = atob(data.content);
+          const fm = parseFrontmatter(content);
+          return { slug: f.name.replace('.md', ''), filename: f.name, sha: data.sha, ...fm };
+        }));
+
+        state.posts = posts.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
+      } catch (e) {
+        showToast('加载失败: ' + e.message, 'error');
+      }
+      state.loading = false;
+      render();
+    }
+
+    async function savePost(slug, content, sha) {
+      const encoded = btoa(unescape(encodeURIComponent(content)));
+      const body = { message: sha ? `update: ${slug}` : `create: ${slug}`, content: encoded, branch: BRANCH };
+      if (sha) body.sha = sha;
+      const res = await ghFetch(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${slug}.md`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error('保存失败');
+      return res.json();
+    }
+
+    async function deletePost(slug, sha) {
+      const res = await ghFetch(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${slug}.md`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `delete: ${slug}`, sha, branch: BRANCH }),
+      });
+      if (!res.ok) throw new Error('删除失败');
+    }
+
+    // ===== Helpers =====
+    function parseFrontmatter(raw) {
+      const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+      if (!match) return { title: '', date: '', description: '', tags: [], draft: false, body: raw };
+      const fm = match[1];
+      const body = match[2].trim();
+      return {
+        title: fm.match(/title:\s*"(.+?)"/)?.[1] || '',
+        date: fm.match(/date:\s*(.+)/)?.[1]?.trim() || '',
+        description: fm.match(/description:\s*"(.+?)"/)?.[1] || '',
+        tags: (fm.match(/tags:\s*\[(.+?)\]/)?.[1] || '').replace(/"/g, '').split(',').map(t => t.trim()).filter(Boolean),
+        draft: /draft:\s*true/.test(fm),
+        body,
+      };
+    }
+
+    function buildMarkdown(data) {
+      let fm = `---\ntitle: "${data.title}"\ndate: ${data.date}\ndescription: "${data.description}"`;
+      if (data.tags.length) fm += `\ntags: [${data.tags.map(t => `"${t}"`).join(', ')}]`;
+      if (data.draft) fm += `\ndraft: true`;
+      fm += `\n---\n\n${data.body}\n`;
+      return fm;
+    }
+
+    function mdToHtml(text) {
+      return text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/^\> (.+)$/gm, '<blockquote><p>$1</p></blockquote>')
+        .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
+        .replace(/^---$/gm, '<hr/>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<)(.+)$/gm, '<p>$1</p>');
+    }
+
+    function showToast(msg, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `toast toast-${type}`;
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ===== Navigation =====
+    function navigate(page, data) {
+      state.page = page;
+      if (data) Object.assign(state, data);
+      render();
+      if (page === 'dashboard' || page === 'posts') loadPosts();
+    }
+
+    // ===== Render =====
+    function render() {
+      const app = document.getElementById('app');
+      if (!getToken() || state.page === 'login') { app.innerHTML = renderLogin(); return; }
+      app.innerHTML = renderTopbar() + renderSidebar() + '<div class="main fade-in">' + renderPage() + '</div>';
+      bindEvents();
+    }
+
+    function renderLogin() {
+      return `<div class="login-container"><div class="login-box" style="text-align:center;">
+        <div class="login-logo">X</div>
+        <h1 style="font-family:var(--font-heading);font-size:24px;margin-bottom:8px;">后台管理</h1>
+        <p style="font-size:13px;color:var(--text-sec);margin-bottom:32px;">请输入 GitHub Personal Access Token</p>
+        <form id="login-form" style="text-align:left;">
+          <label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:8px;">GitHub Token</label>
+          <input type="password" id="token-input" class="input" placeholder="ghp_xxxxxxxxxxxx" required style="margin-bottom:8px;" />
+          <p style="font-size:11px;color:var(--text-sec);margin-bottom:20px;">需要 <code style="background:var(--surface-2);padding:1px 4px;border-radius:3px;font-size:10px;">repo</code> 权限的 Personal Access Token</p>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;">进入后台</button>
+        </form>
+        <a href="/" style="display:inline-block;margin-top:24px;font-size:12px;color:var(--text-sec);text-decoration:none;">&larr; 返回网站</a>
+      </div></div>`;
+    }
+
+    function renderTopbar() {
+      return `<div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <a href="/admin/" style="display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;font-weight:500;text-decoration:none;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93l.164.072c.38.17.836.146 1.17-.098l.738-.512a1.125 1.125 0 011.45.108l.773.773c.39.39.44 1.002.108 1.45l-.512.738c-.244.334-.268.79-.098 1.17l.072.163c.166.397.506.71.93.78l.894.15c.542.09.94.56.94 1.109v1.094c0 .55-.398 1.02-.94 1.11l-.894.149c-.424.07-.764.384-.93.78l-.072.163c-.17.38-.146.837.098 1.17l.512.739c.332.447.282 1.06-.108 1.45l-.773.773a1.125 1.125 0 01-1.45.108l-.738-.512c-.334-.244-.79-.268-1.17-.098l-.164.072c-.396.166-.71.506-.78.93l-.148.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93l-.163-.072c-.38-.17-.836-.146-1.17.098l-.738.512a1.125 1.125 0 01-1.45-.108l-.773-.773a1.125 1.125 0 01-.108-1.45l.512-.738c.244-.334.268-.79.098-1.17l-.072-.164c-.166-.396-.506-.71-.93-.78l-.894-.149c-.542-.09-.94-.56-.94-1.11v-1.094c0-.55.398-1.02.94-1.11l.894-.148c.424-.071.764-.384.93-.781l.072-.163c.17-.38.146-.836-.098-1.17l-.512-.738a1.125 1.125 0 01.108-1.45l.773-.773a1.125 1.125 0 011.45-.108l.738.512c.334.244.79.268 1.17.098l.163-.072c.397-.166.71-.506.78-.93l.15-.894z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            控制台
+          </a>
+          <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--surface-2);color:var(--text-sec);">Admin</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <a href="/" target="_blank" style="font-size:12px;color:var(--text-sec);text-decoration:none;">查看网站 &rarr;</a>
+          <button onclick="clearToken();navigate('login')" style="font-size:12px;color:var(--text-sec);background:none;border:none;cursor:pointer;">退出登录</button>
+        </div>
+      </div>`;
+    }
+
+    function renderSidebar() {
+      const p = state.page;
+      return `<div class="sidebar">
+        <div style="margin-bottom:16px;">
+          <p class="nav-label">内容管理</p>
+          <button class="nav-item ${p==='dashboard'?'active':''}" onclick="navigate('dashboard')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+            仪表盘
+          </button>
+          <button class="nav-item ${p==='posts'?'active':''}" onclick="navigate('posts')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            文章管理
+          </button>
+          <button class="nav-item ${p==='editor'?'active':''}" onclick="navigate('editor',{editPost:null})">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            写新文章
+          </button>
+        </div>
+        <div style="padding-top:16px;">
+          <p class="nav-label">快捷操作</p>
+          <button class="btn btn-primary" style="width:calc(100% - 8px);margin:0 4px;justify-content:center;" onclick="navigate('editor',{editPost:null})">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+            开始写作
+          </button>
+        </div>
+      </div>`;
+    }
+
+    function renderPage() {
+      switch (state.page) {
+        case 'dashboard': return renderDashboard();
+        case 'posts': return renderPosts();
+        case 'editor': return renderEditor();
+        default: return renderDashboard();
+      }
+    }
+
+    function renderDashboard() {
+      if (state.loading) return '<div class="loading">加载中...</div>';
+      const total = state.posts.length;
+      const published = state.posts.filter(p => !p.draft).length;
+      const drafts = total - published;
+
+      return `
+        <div style="margin-bottom:32px;"><h1 style="font-family:var(--font-heading);font-size:24px;margin-bottom:4px;">欢迎回来</h1><p style="font-size:13px;color:var(--text-sec);">这里是你的内容管理中心</p></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;">
+          <div class="card stat-card"><div class="label">全部文章</div><div class="value">${total}</div></div>
+          <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:center;" class="label">已发布 <span class="badge-dot" style="background:#22c55e;"></span></div><div class="value">${published}</div></div>
+          <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:center;" class="label">草稿 <span class="badge-dot" style="background:var(--accent);"></span></div><div class="value">${drafts}</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h2 style="font-family:var(--font-heading);font-size:18px;">最近文章</h2>
+          <button class="btn btn-primary" onclick="navigate('editor',{editPost:null})"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg> 写新文章</button>
+        </div>
+        <div class="card" style="overflow:hidden;">
+          ${total === 0 ? '<div style="padding:48px;text-align:center;"><p style="font-size:13px;color:var(--text-sec);margin-bottom:16px;">还没有文章</p><button class="btn btn-primary" onclick="navigate(\'editor\',{editPost:null})">开始写作</button></div>' :
+          `<table>${state.posts.slice(0,8).map(p => `<tr>
+            <td><div style="font-size:13px;font-weight:500;">${escHtml(p.title)}</div><div style="font-size:11px;color:var(--text-sec);margin-top:2px;">${escHtml(p.description)}</div></td>
+            <td class="hide-mobile" style="font-size:12px;color:var(--text-sec);">${p.date}</td>
+            <td><span class="badge ${p.draft?'badge-gold':'badge-green'}"><span class="badge-dot" style="background:${p.draft?'var(--accent)':'#22c55e'};"></span>${p.draft?'草稿':'已发布'}</span></td>
+            <td style="text-align:right;"><button class="btn btn-outline" onclick="editPost('${p.slug}')">编辑</button></td>
+          </tr>`).join('')}</table>`}
+        </div>`;
+    }
+
+    function renderPosts() {
+      if (state.loading) return '<div class="loading">加载中...</div>';
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+          <div><h1 style="font-family:var(--font-heading);font-size:24px;margin-bottom:4px;">文章管理</h1><p style="font-size:13px;color:var(--text-sec);">共 ${state.posts.length} 篇文章</p></div>
+          <button class="btn btn-primary" onclick="navigate('editor',{editPost:null})"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg> 写新文章</button>
+        </div>
+        <input type="text" class="input" placeholder="搜索文章..." oninput="filterPosts(this.value)" style="max-width:400px;margin-bottom:20px;" />
+        <div class="card" style="overflow:hidden;">
+          <table><thead><tr>
+            <th>标题</th><th class="hide-mobile">标签</th><th class="hide-mobile">日期</th><th>状态</th><th style="text-align:right;">操作</th>
+          </tr></thead><tbody id="posts-tbody">
+          ${state.posts.map(p => `<tr data-title="${escHtml(p.title.toLowerCase())}">
+            <td><div style="font-size:13px;font-weight:500;">${escHtml(p.title)}</div><div style="font-size:11px;color:var(--text-sec);margin-top:2px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.description)}</div></td>
+            <td class="hide-mobile"><div style="display:flex;flex-wrap:wrap;gap:4px;">${p.tags.map(t=>`<span style="font-size:10px;padding:1px 6px;border-radius:99px;background:var(--surface-2);color:var(--text-sec);">${escHtml(t)}</span>`).join('')}</div></td>
+            <td class="hide-mobile" style="font-size:12px;color:var(--text-sec);">${p.date}</td>
+            <td><span class="badge ${p.draft?'badge-gold':'badge-green'}"><span class="badge-dot" style="background:${p.draft?'var(--accent)':'#22c55e'};"></span>${p.draft?'草稿':'已发布'}</span></td>
+            <td style="text-align:right;"><div style="display:flex;gap:8px;justify-content:flex-end;">
+              <button class="btn btn-outline" onclick="editPost('${p.slug}')">编辑</button>
+              <button class="btn btn-danger" onclick="confirmDelete('${p.slug}','${p.sha}')">删除</button>
+            </div></td>
+          </tr>`).join('')}
+          </tbody></table>
+        </div>`;
+    }
+
+    function renderEditor() {
+      const p = state.editPost;
+      const isEdit = !!p;
+      const title = p ? p.title : '';
+      const slug = p ? p.slug : '';
+      const desc = p ? p.description : '';
+      const tags = p ? p.tags.join(', ') : '';
+      const date = p ? p.date : new Date().toISOString().split('T')[0];
+      const draft = p ? p.draft : false;
+      const body = p ? p.body : '';
+
+      return `
+        <div style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <a href="javascript:void(0)" onclick="navigate('posts')" style="font-size:12px;color:var(--text-sec);text-decoration:none;">&larr; 返回</a>
+            <span style="font-size:12px;color:var(--border);">/</span>
+            <span style="font-size:12px;color:var(--text-sec);">${isEdit ? '编辑文章' : '写新文章'}</span>
+          </div>
+          <h1 style="font-family:var(--font-heading);font-size:24px;">${isEdit ? '编辑文章' : '写新文章'}</h1>
+        </div>
+        <form id="editor-form">
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px;">文章标题</label>
+              <input type="text" name="title" class="input input-lg" value="${escHtml(title)}" placeholder="输入文章标题..." required /></div>
+            <div><label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px;">文件名（slug）</label>
+              <input type="text" name="slug" class="input" value="${escHtml(slug)}" placeholder="my-post-slug" required ${isEdit ? 'readonly style="opacity:0.6;cursor:not-allowed;width:100%;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;"' : ''} /></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+            <div><label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px;">摘要描述</label>
+              <input type="text" name="description" class="input" value="${escHtml(desc)}" placeholder="简短描述..." required /></div>
+            <div><label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px;">标签（逗号分隔）</label>
+              <input type="text" name="tags" class="input" value="${escHtml(tags)}" placeholder="技术, AI" /></div>
+            <div style="display:flex;gap:16px;align-items:flex-end;">
+              <div style="flex:1;"><label style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px;">日期</label>
+                <input type="date" name="date" class="input" value="${date}" /></div>
+              <label style="display:flex;align-items:center;gap:6px;padding-bottom:10px;cursor:pointer;font-size:12px;color:var(--text-sec);white-space:nowrap;">
+                <input type="checkbox" name="draft" ${draft?'checked':''} style="accent-color:var(--accent);width:16px;height:16px;" /> 草稿</label>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <label style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);">文章内容（Markdown）</label>
+            <div class="editor-tabs">
+              <button type="button" class="editor-tab active" data-mode="edit">编辑</button>
+              <button type="button" class="editor-tab" data-mode="preview">预览</button>
+              <button type="button" class="editor-tab hide-mobile" data-mode="split">分屏</button>
+            </div>
+          </div>
+          <div id="editor-grid" class="editor-grid" style="grid-template-columns:1fr;">
+            <textarea name="body" class="editor-area" id="md-editor" placeholder="开始写作...">${escHtml(body)}</textarea>
+            <div class="preview-area" id="md-preview" style="display:none;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);margin-top:24px;padding-top:24px;">
+            <div>${isEdit ? `<button type="button" class="btn btn-danger" onclick="confirmDelete('${p.slug}','${p.sha}')">删除文章</button>` : ''}</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span id="save-status" style="font-size:12px;color:var(--text-sec);"></span>
+              <button type="submit" class="btn btn-primary" style="padding:10px 24px;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                ${isEdit ? '保存更新' : '发布文章'}
+              </button>
+            </div>
+          </div>
+        </form>`;
+    }
+
+    // ===== Event Binding =====
+    function bindEvents() {
+      // Login
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const token = document.getElementById('token-input').value.trim();
+          setToken(token);
+          try {
+            const res = await ghFetch('/user');
+            if (res.ok) { navigate('dashboard'); showToast('登录成功'); }
+            else { clearToken(); showToast('Token 无效', 'error'); }
+          } catch { clearToken(); showToast('连接失败', 'error'); }
+        };
+      }
+
+      // Editor form
+      const editorForm = document.getElementById('editor-form');
+      if (editorForm) {
+        // Auto slug
+        const titleInput = editorForm.querySelector('input[name="title"]');
+        const slugInput = editorForm.querySelector('input[name="slug"]');
+        if (titleInput && slugInput && !slugInput.readOnly) {
+          let manual = false;
+          slugInput.addEventListener('input', () => { manual = true; });
+          titleInput.addEventListener('input', () => {
+            if (!manual) {
+              slugInput.value = titleInput.value.toLowerCase().replace(/[^\w\u4e00-\u9fff\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            }
+          });
+        }
+
+        // Tab support
+        const editor = document.getElementById('md-editor');
+        if (editor) {
+          editor.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') { e.preventDefault(); const s = editor.selectionStart; editor.value = editor.value.substring(0, s) + '  ' + editor.value.substring(editor.selectionEnd); editor.selectionStart = editor.selectionEnd = s + 2; }
+          });
+          editor.addEventListener('input', updatePreview);
+        }
+
+        // Editor tabs
+        document.querySelectorAll('.editor-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const mode = tab.dataset.mode;
+            const grid = document.getElementById('editor-grid');
+            const ed = document.getElementById('md-editor');
+            const pv = document.getElementById('md-preview');
+            if (mode === 'edit') { ed.style.display = ''; pv.style.display = 'none'; grid.style.gridTemplateColumns = '1fr'; }
+            else if (mode === 'preview') { ed.style.display = 'none'; pv.style.display = ''; grid.style.gridTemplateColumns = '1fr'; updatePreview(); }
+            else { ed.style.display = ''; pv.style.display = ''; grid.style.gridTemplateColumns = '1fr 1fr'; updatePreview(); }
+          });
+        });
+
+        // Submit
+        editorForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const status = document.getElementById('save-status');
+          status.textContent = '正在保存...';
+          status.style.color = 'var(--text-sec)';
+          const fd = new FormData(editorForm);
+          const data = {
+            title: fd.get('title'),
+            slug: fd.get('slug'),
+            description: fd.get('description'),
+            tags: fd.get('tags').split(',').map(t => t.trim()).filter(Boolean),
+            date: fd.get('date') || new Date().toISOString().split('T')[0],
+            draft: !!editorForm.querySelector('input[name="draft"]').checked,
+            body: fd.get('body'),
+          };
+          try {
+            const md = buildMarkdown(data);
+            const sha = state.editPost?.sha || null;
+            await savePost(data.slug, md, sha);
+            status.textContent = '保存成功！';
+            status.style.color = '#22c55e';
+            showToast('文章已保存，网站将自动重新部署');
+            setTimeout(() => navigate('posts'), 1000);
+          } catch (err) {
+            status.textContent = err.message;
+            status.style.color = '#ef4444';
+            showToast(err.message, 'error');
+          }
+        };
+      }
+    }
+
+    function updatePreview() {
+      const pv = document.getElementById('md-preview');
+      const ed = document.getElementById('md-editor');
+      if (pv && ed) pv.innerHTML = mdToHtml(ed.value || '*还没有内容...*');
+    }
+
+    // ===== Actions =====
+    function editPost(slug) {
+      const post = state.posts.find(p => p.slug === slug);
+      if (post) navigate('editor', { editPost: post });
+    }
+
+    async function confirmDelete(slug, sha) {
+      if (!confirm(`确定删除「${slug}」？此操作不可撤销。`)) return;
+      try {
+        await deletePost(slug, sha);
+        showToast('文章已删除');
+        navigate('posts');
+      } catch (e) { showToast(e.message, 'error'); }
+    }
+
+    function filterPosts(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('#posts-tbody tr').forEach(row => {
+        row.style.display = row.dataset.title.includes(q) ? '' : 'none';
+      });
+    }
+
+    // ===== Init =====
+    if (getToken()) { navigate('dashboard'); } else { render(); }
+  </script>
+</body>
+</html>

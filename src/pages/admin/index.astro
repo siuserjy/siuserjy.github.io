@@ -1,0 +1,13 @@
+---
+// This page simply serves the admin SPA
+// The actual admin app is at public/admin/index.html
+// This Astro wrapper ensures /admin works in both dev and production
+import fs from 'node:fs';
+import path from 'node:path';
+
+const adminHtml = fs.readFileSync(
+  path.join(process.cwd(), 'public/admin/index.html'),
+  'utf-8'
+);
+---
+<Fragment set:html={adminHtml} />
