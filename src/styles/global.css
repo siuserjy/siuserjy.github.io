@@ -318,6 +318,39 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* View Transitions */
+::view-transition-old(root) {
+  animation: 0.3s ease-out both fade-out-slide;
+}
+::view-transition-new(root) {
+  animation: 0.3s ease-out both fade-in-slide;
+}
+@keyframes fade-out-slide {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes fade-in-slide {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+/* Hover glow effect for cards */
+.glow-hover {
+  position: relative;
+}
+.glow-hover::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--color-accent), transparent, var(--color-accent));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  filter: blur(8px);
+}
+.glow-hover:hover::after {
+  opacity: 0.15;
+}
+
 /* Hero canvas is now rendered via JS in index.astro */
 
 /* Subtle grain texture overlay */

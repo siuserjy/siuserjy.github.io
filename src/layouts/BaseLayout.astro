@@ -1,17 +1,24 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
   description?: string;
   showProgress?: boolean;
+  ogImage?: string;
+  ogType?: string;
 }
 
 const {
   title = 'siuser小伟 - 思考、创造、记录',
   description = '一个关于技术、思考与创造的个人空间',
-  showProgress = false
+  showProgress = false,
+  ogImage = '',
+  ogType = 'website'
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -20,7 +27,40 @@ const {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
   <title>{title}</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content={ogType} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  {ogImage && <meta property="og:image" content={ogImage} />}
+  <meta property="og:site_name" content="siuser小伟" />
+  <meta property="og:locale" content="zh_CN" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="siuser小伟" href="/rss.xml" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "siuser小伟",
+    "url": "https://siuserxiaowei.com",
+    "description": "关于技术、思考与创造的个人博客",
+    "author": {
+      "@type": "Person",
+      "name": "siuser小伟",
+      "url": "https://siuserxiaowei.com"
+    }
+  })} />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,6 +69,9 @@ const {
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- View Transitions -->
+  <ClientRouter />
 
   <!-- Theme script (prevent flash) -->
   <script is:inline>
@@ -343,6 +386,36 @@ const {
         document.title = document.hidden ? '(つ≧▽≦)つ 快回来~' : originalTitle;
       });
     })();
+  </script>
+
+  <!-- Re-init on View Transition page swap -->
+  <script is:inline>
+    document.addEventListener('astro:page-load', () => {
+      // Re-apply theme
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // Re-init scroll reveal
+      const revealEls = document.querySelectorAll('.scroll-reveal:not(.revealed)');
+      if (revealEls.length > 0) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => obs.observe(el));
+      }
+
+      // Re-init back to top
+      const btt = document.getElementById('back-to-top');
+      if (btt) btt.classList.toggle('visible', window.scrollY > 400);
+
+      // Scroll to top on navigation
+      window.scrollTo(0, 0);
+    });
   </script>
 
 </body>

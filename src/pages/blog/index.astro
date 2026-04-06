@@ -21,7 +21,7 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
       <p class="animate-fade-in stagger-1 text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">
         Articles
       </p>
-      <h1 class="animate-fade-in stagger-2 text-3xl md:text-5xl mb-4" style="font-family: var(--font-heading); color: var(--text);">
+      <h1 class="animate-fade-in stagger-2 text-3xl md:text-5xl mb-4" style="font-family: var(--font-heading); color: var(--text);" data-i18n="blog.title">
         所有文章
       </h1>
       <p class="animate-fade-in stagger-3 text-base" style="color: var(--text-secondary);">
@@ -29,14 +29,34 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
       </p>
     </section>
 
+    <!-- Search -->
+    <section class="mx-auto px-6 pb-6" style="max-width: var(--container-max);">
+      <div class="relative animate-fade-in stagger-3">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="搜索文章..."
+          data-i18n="blog.search"
+          class="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border outline-none transition-colors duration-200 focus:border-[var(--color-accent)]"
+          style="background: var(--surface); border-color: var(--border); color: var(--text);"
+        />
+      </div>
+    </section>
+
     <!-- Tags filter -->
     {allTags.length > 0 && (
       <section class="mx-auto px-6 pb-8" style="max-width: var(--container-max);">
         <div class="flex flex-wrap gap-2">
+          <button class="tag-filter text-xs px-3 py-1.5 rounded-full border transition-colors duration-200" style="border-color: var(--color-accent); color: var(--color-accent);" data-tag="all" data-i18n="blog.tag.all">
+            全部
+          </button>
           {allTags.map(tag => (
-            <span class="text-xs px-3 py-1.5 rounded-full border cursor-default transition-colors duration-200 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]" style="border-color: var(--border); color: var(--text-secondary);">
+            <button class="tag-filter text-xs px-3 py-1.5 rounded-full border transition-colors duration-200 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]" style="border-color: var(--border); color: var(--text-secondary);" data-tag={tag}>
               {tag}
-            </span>
+            </button>
           ))}
         </div>
       </section>
@@ -44,16 +64,22 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
 
     <!-- Posts -->
     <section class="mx-auto px-6 pb-20" style="max-width: var(--container-max);">
-      <div class="grid gap-6">
+      <div id="posts-container" class="grid gap-6">
         {posts.map(post => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            date={post.data.date.toISOString()}
-            tags={post.data.tags}
-            slug={post.id}
-          />
+          <div class="post-item" data-title={post.data.title.toLowerCase()} data-description={post.data.description.toLowerCase()} data-tags={JSON.stringify(post.data.tags || [])}>
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date.toISOString()}
+              tags={post.data.tags}
+              slug={post.id}
+            />
+          </div>
         ))}
+      </div>
+
+      <div id="no-results" class="text-center py-20 hidden">
+        <p class="text-lg" style="color: var(--text-secondary);" data-i18n="blog.noresults">没有找到匹配的文章</p>
       </div>
 
       {posts.length === 0 && (
@@ -65,4 +91,60 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags || []))];
   </main>
 
   <Footer />
+
+  <script is:inline>
+    (function() {
+      const searchInput = document.getElementById('search-input');
+      const postsContainer = document.getElementById('posts-container');
+      const noResults = document.getElementById('no-results');
+      const postItems = document.querySelectorAll('.post-item');
+      const tagFilters = document.querySelectorAll('.tag-filter');
+      let activeTag = 'all';
+
+      function filterPosts() {
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        let visibleCount = 0;
+
+        postItems.forEach(item => {
+          const title = item.getAttribute('data-title') || '';
+          const desc = item.getAttribute('data-description') || '';
+          const tags = JSON.parse(item.getAttribute('data-tags') || '[]');
+
+          const matchesSearch = !query || title.includes(query) || desc.includes(query);
+          const matchesTag = activeTag === 'all' || tags.includes(activeTag);
+
+          if (matchesSearch && matchesTag) {
+            item.style.display = '';
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        if (noResults) {
+          noResults.classList.toggle('hidden', visibleCount > 0);
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', filterPosts);
+      }
+
+      tagFilters.forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTag = btn.getAttribute('data-tag') || 'all';
+          tagFilters.forEach(b => {
+            if (b.getAttribute('data-tag') === activeTag) {
+              b.style.borderColor = 'var(--color-accent)';
+              b.style.color = 'var(--color-accent)';
+            } else {
+              b.style.borderColor = 'var(--border)';
+              b.style.color = 'var(--text-secondary)';
+            }
+          });
+          filterPosts();
+        });
+      });
+    })();
+  </script>
 </BaseLayout>

@@ -1,0 +1,126 @@
+---
+// Language toggle button component
+---
+
+<button
+  id="lang-toggle"
+  onclick="toggleLang()"
+  class="p-2 rounded-full transition-colors duration-200 hover:bg-[var(--surface-2)]"
+  aria-label="切换语言"
+  title="中/EN"
+>
+  <span id="lang-label" class="text-xs font-medium tracking-wide" style="color: var(--text-secondary);">EN</span>
+</button>
+
+<script is:inline>
+  // i18n translations
+  const i18nMap = {
+    // Header
+    'nav.home': { zh: '首页', en: 'Home' },
+    'nav.about': { zh: '关于', en: 'About' },
+    'nav.blog': { zh: '文章', en: 'Blog' },
+    'nav.projects': { zh: '项目', en: 'Projects' },
+    'nav.timeline': { zh: '历程', en: 'Journey' },
+    'nav.contact': { zh: '联系', en: 'Contact' },
+    // Hero
+    'hero.greeting': { zh: 'Welcome to my space', en: 'Welcome to my space' },
+    'hero.name.prefix': { zh: '你好，我是', en: "Hi, I'm" },
+    'hero.cta.blog': { zh: '浏览文章', en: 'Read Blog' },
+    'hero.cta.about': { zh: '了解更多', en: 'Learn More' },
+    // About section
+    'section.about': { zh: '关于我', en: 'About Me' },
+    'about.intro1': { zh: '你好，我是 siuser小伟。一个对技术和商业都保持热情的探索者。', en: "Hi, I'm siuser. A passionate explorer in technology and business." },
+    'about.intro2': { zh: '我相信最好的产品来自于对问题的深刻理解，而不仅仅是技术的堆砌。在这个 AI 快速发展的时代，我专注于寻找技术与真实需求之间的交汇点。', en: 'I believe the best products come from deep understanding of problems, not just stacking technology. In this era of rapid AI development, I focus on finding the intersection of technology and real needs.' },
+    'about.intro3': { zh: '这个空间记录了我的思考、学习与创造。希望你在这里能找到一些有价值的内容。', en: 'This space documents my thinking, learning, and creation. I hope you find something valuable here.' },
+    'about.card1.title': { zh: '技术探索', en: 'Tech Exploration' },
+    'about.card1.desc': { zh: 'AI / 全栈开发 / 产品工程', en: 'AI / Full-stack / Product Engineering' },
+    'about.card2.title': { zh: '商业思考', en: 'Business Thinking' },
+    'about.card2.desc': { zh: '创业 / 产品策略 / 商业模式', en: 'Startups / Strategy / Business Models' },
+    'about.card3.title': { zh: '持续学习', en: 'Continuous Learning' },
+    'about.card3.desc': { zh: '阅读 / 写作 / 跨领域探索', en: 'Reading / Writing / Cross-domain' },
+    'about.card4.title': { zh: '创造价值', en: 'Create Value' },
+    'about.card4.desc': { zh: '用产品解决真实问题', en: 'Solving real problems with products' },
+    // Timeline
+    'section.timeline': { zh: '成长历程', en: 'My Journey' },
+    // Blog section
+    'section.blog': { zh: '最新文章', en: 'Latest Posts' },
+    'blog.viewall': { zh: '查看全部', en: 'View All' },
+    'blog.viewall.mobile': { zh: '查看全部文章', en: 'View All Posts' },
+    // Contact
+    'section.contact': { zh: '保持联系', en: 'Get in Touch' },
+    'contact.desc': { zh: '如果你对我的内容感兴趣，或想探讨合作的可能性，欢迎通过以下方式联系我。', en: "If you're interested in my content or want to explore collaboration, feel free to reach out." },
+    // Footer
+    'footer.built': { zh: 'Built with patience and curiosity.', en: 'Built with patience and curiosity.' },
+    // Blog page
+    'blog.title': { zh: '所有文章', en: 'All Posts' },
+    'blog.search': { zh: '搜索文章...', en: 'Search posts...' },
+    'blog.tag.all': { zh: '全部', en: 'All' },
+    'blog.noresults': { zh: '没有找到匹配的文章', en: 'No matching posts found' },
+    'blog.back': { zh: '返回文章列表', en: 'Back to posts' },
+    'blog.comments': { zh: '评论', en: 'Comments' },
+    // Projects
+    'projects.title': { zh: '项目展示', en: 'Projects' },
+    'projects.desc': { zh: '我参与和打造的一些产品与项目', en: 'Products and projects I built' },
+    // About page
+    'aboutpage.intro1': { zh: '你好，我是 siuser小伟。欢迎来到我的个人空间。', en: "Hi, I'm siuser. Welcome to my personal space." },
+    'aboutpage.intro2': { zh: '这里是我记录思考、分享洞察的地方。我相信技术的力量，也相信持续学习和创造的价值。在这个快速变化的时代，保持好奇心和独立思考尤为重要。', en: 'This is where I document my thoughts and share insights. I believe in the power of technology and the value of continuous learning. In this fast-changing era, curiosity and independent thinking matter more than ever.' },
+    'aboutpage.intro3': { zh: '我关注的领域包括但不限于：人工智能、产品设计、创业与商业思维。希望通过这个博客，能与志同道合的人建立连接。', en: 'My areas of interest include AI, product design, entrepreneurship, and business thinking. I hope to connect with like-minded people through this blog.' },
+    'aboutpage.principles': { zh: '信条', en: 'Principles' },
+    'aboutpage.p1.title': { zh: '持续学习', en: 'Continuous Learning' },
+    'aboutpage.p1.desc': { zh: '保持对新知识的渴望，在变化中寻找不变的规律。', en: 'Stay hungry for knowledge, find constants in change.' },
+    'aboutpage.p2.title': { zh: '独立思考', en: 'Independent Thinking' },
+    'aboutpage.p2.desc': { zh: '不盲从权威，用第一性原理拆解问题。', en: 'Think from first principles, never blindly follow.' },
+    'aboutpage.p3.title': { zh: '创造价值', en: 'Create Value' },
+    'aboutpage.p3.desc': { zh: '用技术和产品解决真实问题，创造长期价值。', en: 'Solve real problems with tech and products.' },
+    'aboutpage.p4.title': { zh: '分享与连接', en: 'Share & Connect' },
+    'aboutpage.p4.desc': { zh: '在分享中成长，在连接中发现更多可能。', en: 'Grow through sharing, discover through connecting.' },
+    'aboutpage.contact': { zh: '联系我', en: 'Contact Me' },
+    'aboutpage.contact.desc': { zh: '如果你对我写的内容感兴趣，或者想聊聊合作的可能性，欢迎通过以下方式联系我。', en: "If you're interested in what I write or want to discuss collaboration, feel free to reach out." },
+  };
+
+  window._i18nMap = i18nMap;
+
+  function getLang() {
+    return localStorage.getItem('lang') || 'zh';
+  }
+
+  function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    applyLang(lang);
+  }
+
+  function applyLang(lang) {
+    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'zh-CN');
+    // Update toggle label
+    const label = document.getElementById('lang-label');
+    if (label) label.textContent = lang === 'zh' ? 'EN' : '中';
+
+    // Update all i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const entry = i18nMap[key];
+      if (entry) {
+        if (el.tagName === 'INPUT') {
+          el.placeholder = entry[lang] || entry.zh;
+        } else {
+          el.textContent = entry[lang] || entry.zh;
+        }
+      }
+    });
+  }
+
+  function toggleLang() {
+    const current = getLang();
+    const next = current === 'zh' ? 'en' : 'zh';
+    setLang(next);
+  }
+  window.toggleLang = toggleLang;
+
+  // Apply on load
+  applyLang(getLang());
+
+  // Re-apply on View Transition navigation
+  document.addEventListener('astro:page-load', () => {
+    applyLang(getLang());
+  });
+</script>

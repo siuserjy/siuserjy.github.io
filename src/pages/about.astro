@@ -21,44 +21,43 @@ import Footer from '../components/Footer.astro';
       <!-- Content -->
       <div class="animate-fade-in stagger-4 space-y-6">
         <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
-          你好，我是 siuser小伟。欢迎来到我的个人空间。
+          <span data-i18n="aboutpage.intro1">你好，我是 siuser小伟。欢迎来到我的个人空间。</span>
         </p>
 
         <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
-          这里是我记录思考、分享洞察的地方。我相信技术的力量，也相信持续学习和创造的价值。在这个快速变化的时代，保持好奇心和独立思考尤为重要。
+          <span data-i18n="aboutpage.intro2">这里是我记录思考、分享洞察的地方。我相信技术的力量，也相信持续学习和创造的价值。在这个快速变化的时代，保持好奇心和独立思考尤为重要。</span>
         </p>
 
         <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
-          我关注的领域包括但不限于：人工智能、产品设计、创业与商业思维。
-          希望通过这个博客，能与志同道合的人建立连接。
+          <span data-i18n="aboutpage.intro3">我关注的领域包括但不限于：人工智能、产品设计、创业与商业思维。希望通过这个博客，能与志同道合的人建立连接。</span>
         </p>
       </div>
 
       <!-- Principles -->
       <div class="animate-fade-in stagger-5 mt-16">
         <h2 class="text-xl md:text-2xl mb-8" style="font-family: var(--font-heading); color: var(--text);">
-          信条
+          <span data-i18n="aboutpage.principles">信条</span>
         </h2>
         <div class="grid gap-6 md:grid-cols-2">
           <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
             <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">01</div>
-            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">持续学习</h3>
-            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">保持对新知识的渴望，在变化中寻找不变的规律。</p>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);" data-i18n="aboutpage.p1.title">持续学习</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);" data-i18n="aboutpage.p1.desc">保持对新知识的渴望，在变化中寻找不变的规律。</p>
           </div>
           <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
             <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">02</div>
-            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">独立思考</h3>
-            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">不盲从权威，用第一性原理拆解问题。</p>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);" data-i18n="aboutpage.p2.title">独立思考</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);" data-i18n="aboutpage.p2.desc">不盲从权威，用第一性原理拆解问题。</p>
           </div>
           <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
             <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">03</div>
-            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">创造价值</h3>
-            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">用技术和产品解决真实问题，创造长期价值。</p>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);" data-i18n="aboutpage.p3.title">创造价值</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);" data-i18n="aboutpage.p3.desc">用技术和产品解决真实问题，创造长期价值。</p>
           </div>
           <div class="p-6 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
             <div class="text-2xl mb-3" style="color: var(--color-accent); font-family: var(--font-heading);">04</div>
-            <h3 class="text-sm font-medium mb-2" style="color: var(--text);">分享与连接</h3>
-            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">在分享中成长，在连接中发现更多可能。</p>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--text);" data-i18n="aboutpage.p4.title">分享与连接</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);" data-i18n="aboutpage.p4.desc">在分享中成长，在连接中发现更多可能。</p>
           </div>
         </div>
       </div>
@@ -66,10 +65,10 @@ import Footer from '../components/Footer.astro';
       <!-- Contact -->
       <div class="mt-16 pt-8 border-t" style="border-color: var(--border);">
         <h2 class="text-xl md:text-2xl mb-4" style="font-family: var(--font-heading); color: var(--text);">
-          联系我
+          <span data-i18n="aboutpage.contact">联系我</span>
         </h2>
         <p class="text-base leading-relaxed mb-6" style="color: var(--text-secondary);">
-          如果你对我写的内容感兴趣，或者想聊聊合作的可能性，欢迎通过以下方式联系我。
+          <span data-i18n="aboutpage.contact.desc">如果你对我写的内容感兴趣，或者想聊聊合作的可能性，欢迎通过以下方式联系我。</span>
         </p>
         <div class="flex items-center gap-6">
           <a href="https://github.com/siuserjy" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
@@ -78,7 +77,7 @@ import Footer from '../components/Footer.astro';
             </svg>
             GitHub
           </a>
-          <a href="mailto:your@email.com" class="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
+          <a href="mailto:hi@siuserxiaowei.com" class="inline-flex items-center gap-2 text-sm transition-colors duration-200 hover:text-[var(--color-accent)]" style="color: var(--text-secondary);">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
