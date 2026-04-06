@@ -16,12 +16,12 @@ function formatDate(dateStr: string) {
 ---
 
 <a href={`/blog/${slug}`} class="group block">
-  <article class="card-hover relative rounded-xl border overflow-hidden" style="background: var(--surface); border-color: var(--border);">
+  <article class="card-hover shine-hover glass-card relative rounded-xl overflow-hidden">
     <!-- Main content -->
     <div class="p-6 md:p-8">
       <!-- Date & Tags -->
       <div class="flex items-center gap-3 mb-4">
-        <time class="text-xs tracking-wider uppercase" style="color: var(--text-secondary);">
+        <time class="text-xs tracking-wider uppercase" style="color: var(--text-secondary); font-family: var(--font-mono);">
           {formatDate(date)}
         </time>
         {tags.length > 0 && (
