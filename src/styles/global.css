@@ -25,6 +25,7 @@
   /* Typography */
   --font-heading: "Playfair Display", "Noto Serif SC", Georgia, serif;
   --font-body: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Menlo", "Consolas", monospace;
 
   /* Spacing */
   --container-max: 1100px;

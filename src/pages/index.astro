@@ -6,10 +6,16 @@ import BlogCard from '../components/BlogCard.astro';
 import Timeline from '../components/Timeline.astro';
 import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('blog'))
+const allPosts = (await getCollection('blog'))
   .filter(post => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = allPosts.slice(0, 3);
+const totalPosts = allPosts.length;
+
+// Format current date dispatch-style
+const now = new Date();
+const weekNum = Math.ceil((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
+const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 ---
 
 <BaseLayout>
@@ -30,10 +36,14 @@ const posts = (await getCollection('blog'))
       <!-- Content -->
       <div class="relative z-10 mx-auto px-6 w-full" style="max-width: var(--container-max);">
       <div class="max-w-2xl py-20">
-        <!-- Greeting -->
-        <p class="scroll-reveal text-sm tracking-[0.2em] uppercase mb-6" style="color: var(--color-accent);" data-i18n="hero.greeting">
-          Welcome to my space
-        </p>
+        <!-- Dispatch metadata bar -->
+        <div class="scroll-reveal flex items-center gap-3 mb-8" style="font-family: var(--font-mono);">
+          <span class="text-[11px] tracking-[0.15em] uppercase" style="color: var(--color-accent);">siuser小伟</span>
+          <span class="flex-1 h-px" style="background: var(--border);"></span>
+          <span class="text-[11px] tracking-[0.15em] uppercase" style="color: var(--text-secondary);">Week {weekNum}</span>
+          <span class="flex-1 h-px" style="background: var(--border);"></span>
+          <span class="text-[11px] tracking-[0.15em] uppercase" style="color: var(--text-secondary);">{dateStr}</span>
+        </div>
 
         <!-- Name -->
         <h1 class="scroll-reveal text-4xl md:text-6xl lg:text-7xl font-bold mb-6" style="font-family: var(--font-heading); color: var(--text); line-height: 1.1;">
@@ -49,8 +59,10 @@ const posts = (await getCollection('blog'))
           </span>
         </div>
 
-        <!-- Divider -->
-        <div class="scroll-reveal divider-accent mb-8"></div>
+        <!-- Tagline -->
+        <p class="scroll-reveal mb-8 text-xs md:text-sm tracking-[0.2em] uppercase" style="font-family: var(--font-mono); color: var(--color-accent);">
+          Keep Shipping, Keep Thinking.
+        </p>
 
         <!-- CTA Buttons -->
         <div class="scroll-reveal flex flex-wrap items-center gap-4">
@@ -68,11 +80,34 @@ const posts = (await getCollection('blog'))
             GitHub
           </a>
         </div>
+
+        <!-- Stats bar -->
+        <div class="scroll-reveal mt-12 pt-6 border-t flex flex-wrap items-center gap-4 md:gap-8" style="border-color: var(--border); font-family: var(--font-mono);">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] tracking-wider uppercase" style="color: var(--text-secondary);">Posts</span>
+            <span class="text-sm font-medium" style="color: var(--text);">{totalPosts}</span>
+          </div>
+          <span class="hidden md:block text-xs" style="color: var(--border);">|</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] tracking-wider uppercase" style="color: var(--text-secondary);">Projects</span>
+            <span class="text-sm font-medium" style="color: var(--text);">4</span>
+          </div>
+          <span class="hidden md:block text-xs" style="color: var(--border);">|</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] tracking-wider uppercase" style="color: var(--text-secondary);">Stack</span>
+            <span class="text-sm font-medium" style="color: var(--text);">Astro + AI</span>
+          </div>
+          <span class="hidden md:block text-xs" style="color: var(--border);">|</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] tracking-wider uppercase" style="color: var(--text-secondary);">Focus</span>
+            <span class="text-sm font-medium" style="color: var(--color-accent);">AI Voice Agent</span>
+          </div>
+        </div>
       </div>
 
       <!-- Scroll indicator -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce-slow z-10">
-        <span class="text-xs tracking-widest uppercase" style="color: var(--text-secondary); opacity: 0.5;">Scroll</span>
+        <span class="text-xs tracking-widest uppercase" style="color: var(--text-secondary); opacity: 0.5; font-family: var(--font-mono);">Scroll</span>
         <svg class="w-4 h-4" style="color: var(--text-secondary); opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7" />
         </svg>
@@ -89,7 +124,10 @@ const posts = (await getCollection('blog'))
     <section id="about" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
       <!-- Section Header -->
       <div class="scroll-reveal mb-16">
-        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">About</p>
+        <div class="flex items-center gap-3 mb-3">
+          <p class="text-xs tracking-[0.2em] uppercase" style="color: var(--color-accent);">About</p>
+          <span class="text-[10px] tracking-wider" style="font-family: var(--font-mono); color: var(--text-secondary); opacity: 0.5;">// 关于我</span>
+        </div>
         <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);" data-i18n="section.about">关于我</h2>
         <div class="divider-accent mt-4"></div>
       </div>
@@ -111,22 +149,22 @@ const posts = (await getCollection('blog'))
         <!-- Right: Info Cards -->
         <div class="scroll-reveal grid grid-cols-2 gap-4">
           <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
-            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">01</div>
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-mono); font-weight: 500;">01</div>
             <h3 class="text-sm font-medium mb-1" style="color: var(--text);" data-i18n="about.card1.title">技术探索</h3>
             <p class="text-xs leading-relaxed" style="color: var(--text-secondary);" data-i18n="about.card1.desc">AI / 全栈开发 / 产品工程</p>
           </div>
           <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
-            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">02</div>
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-mono); font-weight: 500;">02</div>
             <h3 class="text-sm font-medium mb-1" style="color: var(--text);" data-i18n="about.card2.title">商业思考</h3>
             <p class="text-xs leading-relaxed" style="color: var(--text-secondary);" data-i18n="about.card2.desc">创业 / 产品策略 / 商业模式</p>
           </div>
           <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
-            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">03</div>
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-mono); font-weight: 500;">03</div>
             <h3 class="text-sm font-medium mb-1" style="color: var(--text);" data-i18n="about.card3.title">持续学习</h3>
             <p class="text-xs leading-relaxed" style="color: var(--text-secondary);" data-i18n="about.card3.desc">阅读 / 写作 / 跨领域探索</p>
           </div>
           <div class="p-5 rounded-xl border" style="background: var(--surface); border-color: var(--border);">
-            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-heading);">04</div>
+            <div class="text-2xl mb-2" style="color: var(--color-accent); font-family: var(--font-mono); font-weight: 500;">04</div>
             <h3 class="text-sm font-medium mb-1" style="color: var(--text);" data-i18n="about.card4.title">创造价值</h3>
             <p class="text-xs leading-relaxed" style="color: var(--text-secondary);" data-i18n="about.card4.desc">用产品解决真实问题</p>
           </div>
@@ -143,7 +181,10 @@ const posts = (await getCollection('blog'))
     <section id="timeline" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
       <!-- Section Header -->
       <div class="scroll-reveal mb-16">
-        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Journey</p>
+        <div class="flex items-center gap-3 mb-3">
+          <p class="text-xs tracking-[0.2em] uppercase" style="color: var(--color-accent);">Journey</p>
+          <span class="text-[10px] tracking-wider" style="font-family: var(--font-mono); color: var(--text-secondary); opacity: 0.5;">// 成长历程</span>
+        </div>
         <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);" data-i18n="section.timeline">成长历程</h2>
         <div class="divider-accent mt-4"></div>
       </div>
@@ -161,7 +202,10 @@ const posts = (await getCollection('blog'))
       <!-- Section Header -->
       <div class="scroll-reveal flex items-end justify-between mb-16">
         <div>
-          <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Latest</p>
+          <div class="flex items-center gap-3 mb-3">
+            <p class="text-xs tracking-[0.2em] uppercase" style="color: var(--color-accent);">Latest</p>
+            <span class="text-[10px] tracking-wider" style="font-family: var(--font-mono); color: var(--text-secondary); opacity: 0.5;">// 最新文章</span>
+          </div>
           <h2 class="text-3xl md:text-4xl" style="font-family: var(--font-heading); color: var(--text);" data-i18n="section.blog">最新文章</h2>
           <div class="divider-accent mt-4"></div>
         </div>
@@ -228,7 +272,10 @@ const posts = (await getCollection('blog'))
     <!-- ==================== CONTACT ==================== -->
     <section id="contact" class="mx-auto px-6 py-24 md:py-32" style="max-width: var(--container-max);">
       <div class="scroll-reveal max-w-xl mx-auto text-center">
-        <p class="text-xs tracking-[0.2em] uppercase mb-3" style="color: var(--color-accent);">Contact</p>
+        <div class="flex items-center justify-center gap-3 mb-3">
+          <p class="text-xs tracking-[0.2em] uppercase" style="color: var(--color-accent);">Contact</p>
+          <span class="text-[10px] tracking-wider" style="font-family: var(--font-mono); color: var(--text-secondary); opacity: 0.5;">// 保持联系</span>
+        </div>
         <h2 class="text-3xl md:text-4xl mb-6" style="font-family: var(--font-heading); color: var(--text);" data-i18n="section.contact">保持联系</h2>
         <div class="divider-accent mx-auto mb-8"></div>
         <p class="text-base leading-relaxed mb-10" style="color: var(--text-secondary);">
